@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  web:
+    ports:
+      - "80:80"
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    environment:
+      - LANDLORD_ADDRESS
+      - RPC_URL
+    container_name: solution-web
