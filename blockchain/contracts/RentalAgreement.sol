@@ -26,10 +26,9 @@ contract RentalAgreement {
     function rent (uint deadline, address tenant, uint rentalRate, uint billingPeriodDuration, uint billingsCount, Sign calldata landlordSign) payable public {
         if (tenant_ != address(0)) revert("The contract is being in not allowed state");
 
-        string memory eip712Domain = "EIP712Domain(string name,string version,address verifyingContract)";
         bytes32 eip712DomainHash = keccak256(
             abi.encode(
-                keccak256(eip712Domain),
+                keccak256("EIP712Domain(string name,string version,address verifyingContract)"),
                 keccak256(bytes("Rental Agreement")),
                 keccak256(bytes("1.0")),
                 address(this)
