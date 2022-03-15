@@ -26,6 +26,29 @@ contract RentalAgreement {
     function rent (uint deadline, address tenant, uint rentalRate, uint billingPeriodDuration, uint billingsCount, Sign calldata landlordSign) payable public {
         if (tenant_ != address(0)) revert("The contract is being in not allowed state");
 
+        string memory EIP712_DOMAIN = "EIP712Domain(string name,string version,address verifyingContract)";
+        bytes32 EIP712_DOMAIN_TYPEHASH = keccak256(abi.encodePacked(EIP712_DOMAIN));
+        bytes32 DOMAIN_SEPARATOR = keccak256(abi.encode(
+            EIP712_DOMAIN_TYPEHASH,
+            keccak256("Rental Agreement"),
+            keccak256("1.0"),
+            address(this)
+        ));
+        bytes32 hash_ = keccak256(abi.encodePacked(
+            "\\x19\\x01",
+            DOMAIN_SEPARATOR,
+            keccak256(abi.encode(deadline, tenant, rentalRate, billingPeriodDuration, billingsCount))
+        ));
+        if (landLord_ != ecrecover(hash_, landlordSign.v, landlordSign.r, landlordSign.s)) revert("Invalid landlord sign");
+
+        if (deadline > block.timestamp) revert("The operation is outdated");
+        if (tenant != msg.sender) revert("The caller account and the account specified as a tenant do not match");
+        if (landLord_ == tenant) revert("The landlord cannotbecome a tenant");
+        if (rentalRate <= 0) revert("Rent amount should be strictly greater than zero");
+        if (billingPeriodDuration <= 0) revert("Rent period should be strictly greater than zero");
+        if (billingsCount <= 0) revert("Rent period repeats should be strictly greater than zero");
+        if (msg.value < rentalRate) revert("Incorrect deposit");
+
         deadline_ = deadline;
         tenant_ = tenant;
         rentalRate_ = rentalRate;
