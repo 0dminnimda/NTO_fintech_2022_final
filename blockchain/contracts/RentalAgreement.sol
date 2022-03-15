@@ -29,8 +29,8 @@ contract RentalAgreement {
         bytes32 eip712DomainHash = keccak256(
             abi.encode(
                 keccak256("EIP712Domain(string name,string version,address verifyingContract)"),
-                keccak256(bytes("Rental Agreement")),
-                keccak256(bytes("1.0")),
+                keccak256("Rental Agreement"),
+                keccak256("1.0"),
                 address(this)
             )
         );
