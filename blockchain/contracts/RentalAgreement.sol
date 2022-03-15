@@ -51,7 +51,7 @@ contract RentalAgreement {
 
         if (deadline < block.timestamp) revert("The operation is outdated");
         if (tenant != msg.sender) revert("The caller account and the account specified as a tenant do not match");
-        if (landLord_ == tenant) revert("The landlord cannotbecome a tenant");
+        if (landLord_ == tenant) revert("The landlord cannot become a tenant");
         if (rentalRate <= 0) revert("Rent amount should be strictly greater than zero");
         if (billingPeriodDuration <= 0) revert("Rent period should be strictly greater than zero");
         if (billingsCount <= 0) revert("Rent period repeats should be strictly greater than zero");
