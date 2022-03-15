@@ -38,7 +38,14 @@ contract RentalAgreement {
         bytes32 digest = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
-            keccak256(abi.encode(PERMIT_TYPEHASH, deadline, tenant, rentalRate, billingPeriodDuration, billingsCount))
+            keccak256(abi.encode(
+                PERMIT_TYPEHASH,
+                deadline,
+                tenant,
+                rentalRate,
+                billingPeriodDuration,
+                billingsCount
+            ))
         ));
         if (landLord_ != ecrecover(digest, landlordSign.v, landlordSign.r, landlordSign.s)) revert("Invalid landlord sign");
 
