@@ -49,7 +49,7 @@ contract RentalAgreement {
         ));
         if (landLord_ != ecrecover(digest, landlordSign.v, landlordSign.r, landlordSign.s)) revert("Invalid landlord sign");
 
-        if (deadline > block.timestamp) revert("The operation is outdated");
+        if (deadline < block.timestamp) revert("The operation is outdated");
         if (tenant != msg.sender) revert("The caller account and the account specified as a tenant do not match");
         if (landLord_ == tenant) revert("The landlord cannotbecome a tenant");
         if (rentalRate <= 0) revert("Rent amount should be strictly greater than zero");
