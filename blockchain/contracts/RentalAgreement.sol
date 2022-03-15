@@ -24,6 +24,8 @@ contract RentalAgreement {
     }
 
     function rent (uint deadline, address tenant, uint rentalRate, uint billingPeriodDuration, uint billingsCount, Sign calldata landlordSign) payable public {
+        if (tenant_) revert("The contract is being in not allowed state");
+
         deadline_ = deadline;
         tenant_ = tenant;
         rentalRate_ = rentalRate;
