@@ -4,3 +4,4 @@ Dockerfile
 .gitignore
 .dockerignore
 .env*
+you_know_the_rules.txt
