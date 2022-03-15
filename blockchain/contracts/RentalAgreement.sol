@@ -25,7 +25,7 @@ contract RentalAgreement {
         landLord_ = msg.sender;
         roomInternalId_ = roomInternalId;
         DOMAIN_SEPARATOR = keccak256(abi.encode(
-            keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+            keccak256("EIP712Domain(string name,string version,address verifyingContract)"),
             keccak256(bytes("Rental Agreement")),
             keccak256(bytes("1.0")),
             address(this)
