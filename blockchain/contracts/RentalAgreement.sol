@@ -26,20 +26,30 @@ contract RentalAgreement {
     function rent (uint deadline, address tenant, uint rentalRate, uint billingPeriodDuration, uint billingsCount, Sign calldata landlordSign) payable public {
         if (tenant_ != address(0)) revert("The contract is being in not allowed state");
 
-        string memory EIP712_DOMAIN = "EIP712Domain(string name,string version,address verifyingContract)";
-        bytes32 EIP712_DOMAIN_TYPEHASH = keccak256(abi.encodePacked(EIP712_DOMAIN));
-        bytes32 DOMAIN_SEPARATOR = keccak256(abi.encode(
-            EIP712_DOMAIN_TYPEHASH,
-            keccak256("Rental Agreement"),
-            keccak256("1.0"),
-            address(this)
-        ));
-        bytes32 hash_ = keccak256(abi.encodePacked(
-            "\\x19\\x01",
-            DOMAIN_SEPARATOR,
-            keccak256(abi.encode(deadline, tenant, rentalRate, billingPeriodDuration, billingsCount))
-        ));
-        if (landLord_ != ecrecover(hash_, landlordSign.v, landlordSign.r, landlordSign.s)) revert("Invalid landlord sign");
+        string memory eip712Domain = "EIP712Domain(string name,string version,address verifyingContract)";
+        bytes32 eip712DomainHash = keccak256(
+            abi.encode(
+                keccak256(eip712Domain),
+                keccak256(bytes("Rental Agreement")),
+                keccak256(bytes("1.0")),
+                address(this)
+            )
+        );
+        bytes32 hashStruct = keccak256(
+            abi.encode(
+                keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)"),
+                deadline,
+                tenant,
+                rentalRate,
+                billingPeriodDuration,
+                billingsCount
+            )
+        );
+
+        bytes32 hash = keccak256(abi.encodePacked("\x19\x01", eip712DomainHash, hashStruct));
+        address signer = ecrecover(hash, landlordSign.v, landlordSign.r, landlordSign.s);
+
+        if (landLord_ != signer) revert("Invalid landlord sign");
 
         if (deadline > block.timestamp) revert("The operation is outdated");
         if (tenant != msg.sender) revert("The caller account and the account specified as a tenant do not match");
