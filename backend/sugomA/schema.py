@@ -1,6 +1,8 @@
 import os
 import secrets
+import time
 
+import eth_keys
 from ariadne import (MutationType, ObjectType, QueryType, gql,
                      make_executable_schema)
 
@@ -9,6 +11,7 @@ from sugomA.AmogusApp.models import Authentication
 
 class Hack:
     requested_auth: int
+    auth_key: bytes
     successfull_auth: bool
     address: str
 
@@ -17,11 +20,12 @@ class Hack:
 
     def reset(self):
         self.requested_auth = 0
+        self.auth_key = b"<invalid>"
         self.successfull_auth = False
         self.address = "<invalid>"
 
     def __str__(self):
-        args = [self.requested_auth, self.successfull_auth, self.address]
+        args = [self.requested_auth, self.auth_key, self.successfull_auth, self.address]
         return type(self).__name__ + "(" + ", ".join(map(str, args)) + ")"
 
 
@@ -98,29 +102,18 @@ mutation = MutationType()
 @mutation.field("requestAuthentication")
 def resolve_request_authentication(_, info, address):
     code_smell.requested_auth = 2
-    return "super_" + secrets.token_urlsafe(30) + "_secret"
-
-
-"""
-Роли пользователей определяются следующим образом:
-• Адрес аккаунта арендодателя передаётся приложению при запуске.
-• Если в базе данных существует комната, арендованная пользователем,
-  то он считается арендатором.
-• Если в базе данных существует арендованная комната, в списке кассиров
-  которой содержится адрес в сети блокчейн аккаунта пользователя,
-  то этот пользователь — кассир.
-• Аутентифицированный пользователь может не иметь роли, например, если он
-  является потенциальным арендатором.
-• Часть функций, например, получение квитанций, доступно и
-  неаутентифицированным пользователям.
-"""
+    key = str(time.time()) + "_" + secrets.token_urlsafe(30)
+    code_smell.auth_key = key.encode('utf-8')
+    return key
 
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
-    # if not code_smell.get("requested_auth", False):
+    signature = eth_keys.KeyAPI.Signature(
+        vrs=(signedMessage.v, signedMessage.r, signedMessage.s,))
+    signer = signature.recover_public_key_from_msg(code_smell.auth_key)
 
-    if code_smell.requested_auth == 0:
+    if signer == address and code_smell.requested_auth == 0:
         raise Exception("A")
 
     code_smell.successfull_auth = True
