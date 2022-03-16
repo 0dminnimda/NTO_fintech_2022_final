@@ -18,8 +18,11 @@ contract RentalAgreement {
     address landLord_;
     address tenant_;
 
-    bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMIT_TYPEHASH = keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)");
+    bytes32 private DOMAIN_SEPARATOR;
+    bytes32 private constant PERMIT_TYPEHASH = keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)");
+
+    address[] private cashiers;
+    mapping(address => uint256) private cashierNonces;
 
     constructor (uint roomInternalId) {
         landLord_ = msg.sender;
@@ -64,6 +67,29 @@ contract RentalAgreement {
         billingsCount_ = billingsCount;
         rentStartTime_ = block.timestamp;
         rentEndTime_ = rentStartTime_ + billingPeriodDuration * billingsCount;
+    }
+
+    function addCashier (address addr) public {
+        cashiers.push(addr);
+    }
+
+    function removeCashier (address cashierAddr) public {
+        for (uint256 i = 0; i < cashiers.length; i += 1) {
+            if (cashiers[i] == cashierAddr) {
+                cashiers[i] = cashiers[cashiers.length - 1];
+                cashiers.pop();
+                delete cashierNonces[cashierAddr];
+                break;
+            }
+        }
+    }
+
+    function getCashierNonce (address cashierAddr) view public returns (uint) { return cashierNonces[cashierAddr]; }
+
+    function getCashiersList () view public returns (address[] memory) { return cashiers; }
+
+    function pay (uint deadline, uint nonce, uint value, Sign calldata cashierSign) payable public {
+
     }
 
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }
