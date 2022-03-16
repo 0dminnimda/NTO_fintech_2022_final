@@ -109,7 +109,7 @@ def resolve_authenticate(_, info, address, signedMessage):
 
     if signer == address:
         return authentications[0]
-    raise Exception("A")
+    raise Exception("Authentication failed")
 
 
 # authentication = ObjectType("Authentication")
