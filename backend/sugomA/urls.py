@@ -25,7 +25,7 @@ from django.http.response import JsonResponse
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
-from .AmogusApp.views import home
+from .AmogusApp.views import home, check
 from .schema import schema, code_smell
 
 
@@ -68,5 +68,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('graphql', track(GraphQLView.as_view(
         schema=schema, error_formatter=my_format_error)), name='graphql'),
+    path("check", check),
     # path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
 ]
