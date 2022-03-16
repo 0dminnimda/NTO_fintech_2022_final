@@ -26,7 +26,7 @@ contract RentalAgreement {
     mapping(address => uint256) private cashierNonce;
     mapping(address => bool) private cashierStatus;
 
-    event PurchasePayment(uint value);
+    event PurchasePayment(uint256 amount);
 
     constructor (uint256 roomInternalId) {
         landLord_ = msg.sender;
@@ -104,7 +104,28 @@ contract RentalAgreement {
 
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
-    function pay (uint deadline, uint nonce, uint value, Sign calldata cashierSign) payable public {
+    function pay (uint256 deadline, uint256 nonce, uint256 value, Sign calldata cashierSign) payable public {
+        //if (rentEndTime_ < block.timestamp) revert("The contract is being in not allowed state");
+        //if (address(this).balance < )
+
+        if (deadline < block.timestamp) revert("The operation is outdated");
+
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            keccak256(abi.encode(
+                TICKET_TYPEHASH,
+                deadline,
+                nonce,
+                value
+            ))
+        ));
+        address cashier = ecrecover(digest, cashierSign.v, cashierSign.r, cashierSign.s);
+
+        if (!cashierStatus[cashier]) revert("Unknown cashier");
+        if (cashierNonce[cashier] != nonce) revert("Invalid nonce");
+        if (value != msg.value) revert("Invalid value");
+
         emit PurchasePayment(value);
     }
 
