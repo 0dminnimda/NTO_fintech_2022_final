@@ -120,9 +120,8 @@ def resolve_authenticate(_, info, address, signedMessage):
     code_smell.address = address
     authentications = Authentication.objects.filter(address=address)
 
-    if len(authentications) == 0:
-        return Authentication.objects.create(
-            address=address, isLandlord=False)
+    if len(authentications) != 0:  # should be 1
+        return authentications[0]
 
     return Authentication.objects.create(
         address=address, isLandlord=os.environ.get("LANDLORD_ADDRESS", False))
