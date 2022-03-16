@@ -66,7 +66,7 @@ def my_format_error(error, debug: bool = False) -> dict:
 urlpatterns = [
     path("", home),
     path("admin/", admin.site.urls),
-    path('graphql/', track(GraphQLView.as_view(
+    path('graphql', track(GraphQLView.as_view(
         schema=schema, error_formatter=my_format_error)), name='graphql'),
     # path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
 ]
