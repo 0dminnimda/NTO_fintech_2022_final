@@ -1,23 +1,14 @@
-version: '3.7'
-services:
-    frontend:
-        ports:
-            - "69:69"
-        build:
-            context: frontend
-            dockerfile: Dockerfile
-        environment:
-            - LANDLORD_ADDRESS
-            - RPC_URL
-        container_name: solution-frontend
+version: "3.9"
 
-    backend:
-        ports:
-            - "420:420"
+services:
+    web:
         build:
             context: backend
             dockerfile: Dockerfile
+        command: python manage.py runserver 0.0.0.0:80
+        ports:
+            - "80:80"
         environment:
             - LANDLORD_ADDRESS
             - RPC_URL
-        container_name: solution-backend
+        container_name: solution-web
