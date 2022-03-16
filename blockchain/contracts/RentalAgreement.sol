@@ -26,7 +26,7 @@ contract RentalAgreement {
     mapping(address => uint256) private cashierNonce;
     mapping(address => bool) private cashierStatus;
 
-    event PurchasePayment(uint256 value);
+    event PurchasePayment(uint value);
 
     constructor (uint256 roomInternalId) {
         landLord_ = msg.sender;
@@ -104,8 +104,8 @@ contract RentalAgreement {
 
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
-    function pay (uint256 deadline, uint256 nonce, uint256 value, Sign calldata cashierSign) payable public {
-        emit PurchasePayment(120);
+    function pay (uint deadline, uint nonce, uint value, Sign calldata cashierSign) payable public {
+        emit PurchasePayment(value);
     }
 
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }
