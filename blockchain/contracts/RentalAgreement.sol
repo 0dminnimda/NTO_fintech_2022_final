@@ -94,7 +94,10 @@ contract RentalAgreement {
         }
     }
 
-    function getCashierNonce (address cashierAddr) view public returns (uint) { return cashierNonce[cashierAddr]; }
+    function getCashierNonce (address cashierAddr) view public returns (uint) {
+        if (cashierStatus[cashierAddr]) return cashierNonce[cashierAddr];
+        return 0;
+    }
 
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
