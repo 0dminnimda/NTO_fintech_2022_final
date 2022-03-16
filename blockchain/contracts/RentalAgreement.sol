@@ -22,7 +22,8 @@ contract RentalAgreement {
     bytes32 private constant PERMIT_TYPEHASH = keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)");
 
     address[] private cashiers;
-    mapping(address => uint256) private cashierNonces;
+    mapping(address => uint256) private cashierNonce;
+    mapping(address => bool) private cashierStatus;
 
     constructor (uint roomInternalId) {
         landLord_ = msg.sender;
@@ -75,25 +76,25 @@ contract RentalAgreement {
         if (addr == address(0)) revert("Zero address cannot become a cashier");
 
         cashiers.push(addr);
-        cashierNonces[addr] += 1;
+        cashierNonce[addr] += 1;
+        cashierStatus[addr] = true;
     }
 
     function removeCashier (address cashierAddr) public {
         if (msg.sender != tenant_) revert("You are not a tenant");
+        if (!cashierStatus[cashierAddr]) revert("Unknown cashier");
 
         for (uint256 i = 0; i < cashiers.length; i += 1) {
             if (cashiers[i] == cashierAddr) {
                 cashiers[i] = cashiers[cashiers.length - 1];
                 cashiers.pop();
-                delete cashierNonces[cashierAddr];
+                cashierStatus[cashierAddr] = false;
                 return;
             }
         }
-
-        revert("Unknown cashier");
     }
 
-    function getCashierNonce (address cashierAddr) view public returns (uint) { return cashierNonces[cashierAddr]; }
+    function getCashierNonce (address cashierAddr) view public returns (uint) { return cashierNonce[cashierAddr]; }
 
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
