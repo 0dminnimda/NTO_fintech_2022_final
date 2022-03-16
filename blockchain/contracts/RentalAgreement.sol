@@ -15,6 +15,9 @@ contract RentalAgreement {
     uint256 billingsCount_;
     uint256 rentStartTime_;
     uint256 rentEndTime_;
+    uint256 currentProfit_ = 0;
+    uint256 currentBillingPeriod_ = 0;
+
     address landLord_;
     address tenant_;
 
@@ -106,7 +109,14 @@ contract RentalAgreement {
 
     function pay (uint256 deadline, uint256 nonce, uint256 value, Sign calldata cashierSign) payable public {
         if (rentEndTime_ <= block.timestamp) revert("The contract is being in not allowed state");
-        if (((block.timestamp - rentStartTime_) / billingPeriodDuration_) * rentalRate_ > address(this).balance) revert("The contract is being in not allowed state");
+        uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
+        if (currentBillingPeriod_ != newBillingPeriod) {
+            if (currentProfit_ < rentalRate_ || newBillingPeriod - currentBillingPeriod_ > 1) revert("The contract is being in not allowed state");
+            else {
+                currentProfit_ = 0;
+                currentBillingPeriod_ = newBillingPeriod;
+            }
+        }
 
         if (deadline < block.timestamp) revert("The operation is outdated");
         bytes32 digest = keccak256(abi.encodePacked(
@@ -126,6 +136,7 @@ contract RentalAgreement {
         if (value != msg.value) revert("Invalid value");
 
         cashierNonce[cashier] += 1;
+        currentProfit_ += msg.value;
         emit PurchasePayment(value);
     }
 
