@@ -5,9 +5,17 @@ from ariadne import (MutationType, ObjectType, QueryType, gql,
 from sugomA.AmogusApp.models import Authentication
 import time
 import eth_keys
+import sqlite3
 
 
 code_smell = {}  # type: ignore
+
+con = sqlite3.connect('sqlite.db', check_same_thread=False)
+cur = con.cursor()
+
+cur.execute('''CREATE TABLE IF NOT EXISTS Messages
+               (address text, message text)''')
+con.commit()
 
 
 type_defs = """
@@ -80,6 +88,8 @@ def resolve_request_authentication(_, info, address):
 
     message = f'{int(time.time())}_{secrets.token_urlsafe(30)}'
 
+    cur.execute(f'INSERT INTO Messages VALUES ("{address}", "{message}")')
+    con.commit()
 
     return message
 
@@ -92,8 +102,8 @@ def resolve_authenticate(_, info, address, signedMessage):
         return Authentication.objects.create(
             address=address, isLandlord=False)
 
-    #cur.execute('SELECT message FROM Messages WHERE address = "{address}"')
-    message = None #  тут надо получить message из базы данных    #cur.fetchone()[0]
+    cur.execute('SELECT message FROM Messages WHERE address = "{address}"')
+    message = cur.fetchone()[0]
     signature = eth_keys.KeyAPI.Signature(vrs=(signedMessage.v, signedMessage.r, signedMessage.s,))
     signer = signature.recover_public_key_from_msg(message)
 
