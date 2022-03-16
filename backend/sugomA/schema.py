@@ -1,9 +1,10 @@
 import secrets
-
 from ariadne import (MutationType, ObjectType, QueryType, gql,
                      make_executable_schema)
 
 from sugomA.AmogusApp.models import Authentication
+import time
+import eth_keys
 
 
 code_smell = {}  # type: ignore
@@ -77,36 +78,28 @@ mutation = MutationType()
 def resolve_request_authentication(_, info, address):
     code_smell["requested_auth"] = True
 
-    return "super_" + secrets.token_urlsafe(30) + "_secret"
+    message = f'{int(time.time())}_{secrets.token_urlsafe(30)}'
 
 
-"""
-Роли пользователей определяются следующим образом:
-• Адрес аккаунта арендодателя передаётся приложению при запуске.
-• Если в базе данных существует комната, арендованная пользователем,
-  то он считается арендатором.
-• Если в базе данных существует арендованная комната, в списке кассиров
-  которой содержится адрес в сети блокчейн аккаунта пользователя,
-  то этот пользователь — кассир.
-• Аутентифицированный пользователь может не иметь роли, например, если он
-  является потенциальным арендатором.
-• Часть функций, например, получение квитанций, доступно и
-  неаутентифицированным пользователям.
-"""
+    return message
 
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
-    raise Exception("A")
-    # if not code_smell.get("requested_auth", False):
-
     authentications = Authentication.objects.filter(address=address)
 
     if len(authentications) == 0:
         return Authentication.objects.create(
             address=address, isLandlord=False)
 
-    return authentications[0]
+    #cur.execute('SELECT message FROM Messages WHERE address = "{address}"')
+    message = None #  тут надо получить message из базы данных    #cur.fetchone()[0]
+    signature = eth_keys.KeyAPI.Signature(vrs=(signedMessage.v, signedMessage.r, signedMessage.s,))
+    signer = signature.recover_public_key_from_msg(message)
+
+    if signer == address:
+        return authentications[0]
+    raise Exception("A")
 
 
 # authentication = ObjectType("Authentication")
