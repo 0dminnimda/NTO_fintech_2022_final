@@ -1,3 +1,4 @@
 django==3.2.11
-#ariadne_django==0.2.0
-graphene_django==2.15.0
+ariadne_django==0.2.0
+# graphene_django==2.15.0
+# django-web3-auth==0.1.6
