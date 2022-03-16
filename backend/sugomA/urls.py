@@ -33,13 +33,16 @@ def track(view):
     def wrapper(*args, **kwargs):
         response = view(*args, **kwargs)
 
+        if code_smell.requested_auth > 0:
+            code_smell.requested_auth -= 1
+
         if isinstance(response, JsonResponse):
             data = json.loads(response.content)
             if "data" in data and "errors" in data:
                 del data["data"]
             response = JsonResponse(data)  # json.dumps(data)
         else:
-            code_smell.clear()
+            code_smell.reset()
 
         return response
 

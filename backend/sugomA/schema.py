@@ -6,7 +6,6 @@ from ariadne import (MutationType, ObjectType, QueryType, gql,
 from sugomA.AmogusApp.models import Authentication
 
 
-code_smell = {}  # type: ignore
 class Hack:
     requested_auth: int
     successfull_auth: bool
@@ -25,6 +24,7 @@ class Hack:
         return type(self).__name__ + "(" + ", ".join(map(str, args)) + ")"
 
 
+code_smell = Hack()
 
 
 type_defs = """
@@ -93,8 +93,7 @@ mutation = MutationType()
 
 @mutation.field("requestAuthentication")
 def resolve_request_authentication(_, info, address):
-    code_smell["requested_auth"] = True
-
+    code_smell.requested_auth = 2
     return "super_" + secrets.token_urlsafe(30) + "_secret"
 
 
