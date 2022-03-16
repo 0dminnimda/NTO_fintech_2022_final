@@ -1,4 +1,6 @@
 from ariadne import QueryType, make_executable_schema, gql, MutationType, ObjectType
+import secrets
+
 
 type_defs = gql("""
 type Query {
@@ -79,25 +81,31 @@ input InputSignature {
 
 
 query = QueryType()
-mutation = MutationType()
 
 
 @query.field("authentication")
-def resolve_authentication(root, info):
-    print(root, info)
-    return info["authentication"]
+def resolve_authentication(_, info):
+    return None
+
+
+mutation = MutationType()
+
+
+@mutation.field("requestAuthentication")
+def resolve_requestAuthentication(_, info, address):
+    return "super_" + secrets.token_urlsafe(30) + "_secret"
 
 
 authentication = ObjectType("Authentication")
 
 
 @authentication.field("address")
-def resolve_address(root, info):
+def resolve_address(_, info):
     return "gg"
 
 
 @authentication.field("isLandlord")
-def resolve_isLandlord(root, info):
+def resolve_isLandlord(_, info):
     return False
 
 
