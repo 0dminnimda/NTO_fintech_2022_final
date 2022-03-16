@@ -10,5 +10,5 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Run the application:
-# COPY myapp.py .
-# CMD ["python", "myapp.py"]
+COPY manage.py .
+CMD ["python3", "manage.py", "runserver", "solution-web:80"]
