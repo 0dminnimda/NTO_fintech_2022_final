@@ -79,14 +79,18 @@ contract RentalAgreement {
     }
 
     function removeCashier (address cashierAddr) public {
+        if (msg.sender != tenant_) revert("You are not a tenant");
+
         for (uint256 i = 0; i < cashiers.length; i += 1) {
             if (cashiers[i] == cashierAddr) {
                 cashiers[i] = cashiers[cashiers.length - 1];
                 cashiers.pop();
                 delete cashierNonces[cashierAddr];
-                break;
+                return;
             }
         }
+
+        revert("Unknown cashier");
     }
 
     function getCashierNonce (address cashierAddr) view public returns (uint) { return cashierNonces[cashierAddr]; }
