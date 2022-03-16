@@ -105,9 +105,7 @@ contract RentalAgreement {
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
     function pay (uint256 deadline, uint256 nonce, uint256 value, Sign calldata cashierSign) payable public {
-        //if (rentEndTime_ < block.timestamp) revert("The contract is being in not allowed state");
-        //if (address(this).balance < )
-
+        if (rentEndTime_ < block.timestamp || address(this).balance < ((block.timestamp - rentStartTime_) / billingPeriodDuration_) * rentalRate_) revert("The contract is being in not allowed state");
         if (deadline < block.timestamp) revert("The operation is outdated");
 
         bytes32 digest = keccak256(abi.encodePacked(
