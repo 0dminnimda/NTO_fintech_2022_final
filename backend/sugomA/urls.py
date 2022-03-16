@@ -24,7 +24,7 @@ from .AmogusApp.views import home
 from .schema import schema
 
 urlpatterns = [
-    path("/", home),
+    path("", home),
     path("admin/", admin.site.urls),
     path('graphql/', GraphQLView.as_view(schema=schema), name='graphql'),
     # path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
