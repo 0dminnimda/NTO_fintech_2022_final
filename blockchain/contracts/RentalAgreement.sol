@@ -105,24 +105,6 @@ contract RentalAgreement {
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
     function pay (uint256 deadline, uint256 nonce, uint256 value, Sign calldata cashierSign) payable public {
-        //if (deadline < block.timestamp) revert("The operation is outdated");
-
-        /*bytes32 digest = keccak256(abi.encodePacked(
-            "\x19\x01",
-            DOMAIN_SEPARATOR,
-            keccak256(abi.encode(
-                TICKET_TYPEHASH,
-                deadline,
-                nonce,
-                value
-            ))
-        ));
-        address cashier = ecrecover(digest, cashierSign.v, cashierSign.r, cashierSign.s);*/
-
-        //if (!cashierStatus[cashier]) revert("Unknown cashier");
-        //if (cashierNonce[cashier] != nonce) revert("Invalid nonce");
-        //if (value != msg.value) revert("Invalid value");
-
         emit PurchasePayment(value);
     }
 
