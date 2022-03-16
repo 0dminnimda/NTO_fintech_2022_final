@@ -8,31 +8,6 @@ from sugomA.AmogusApp.models import Authentication
 type_defs = """
 type Query {
     authentication: Authentication
-}
-
-type Mutation {
-    requestAuthentication(address: String!): String!
-    authenticate(
-        address: String!
-        signedMessage: InputSignature!
-    ): Authentication!
-}
-
-type Authentication {
-    address: String!
-    isLandlord: Boolean!
-}
-
-input InputSignature {
-    v: String!
-    r: String!
-    s: String!
-}
-"""
-
-type_defs = """
-type Query {
-    authentication: Authentication
     rooms: [Room!]!
     room(id: ID!): Room!
 }
