@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "sugomA.AmogusApp",
-    "graphene_django",
+
+    "ariadne_django",
+    # "graphene_django",
+    # "web3auth",
 ]
 
 MIDDLEWARE = [
@@ -124,6 +127,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GRAPHENE = {
-    "SCHEMA": "sugomA.schema.schema"
-}
+# GRAPHENE = {
+#     "SCHEMA": "sugomA.schema.schema"
+# }
