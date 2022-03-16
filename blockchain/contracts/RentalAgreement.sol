@@ -70,7 +70,12 @@ contract RentalAgreement {
     }
 
     function addCashier (address addr) public {
+        if (msg.sender != tenant_) revert("You are not a tenant");
+        if (addr == landLord_) revert("The landlord cannot become a cashier");
+        if (addr == address(0)) revert("Zero address cannot become a cashier");
+
         cashiers.push(addr);
+        cashierNonces[addr] += 1;
     }
 
     function removeCashier (address cashierAddr) public {
