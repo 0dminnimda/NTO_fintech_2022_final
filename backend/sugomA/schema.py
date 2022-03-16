@@ -7,6 +7,24 @@ from sugomA.AmogusApp.models import Authentication
 
 
 code_smell = {}  # type: ignore
+class Hack:
+    requested_auth: int
+    successfull_auth: bool
+    address: str
+
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.requested_auth = 0
+        self.successfull_auth = False
+        self.address = "<invalid>"
+
+    def __str__(self):
+        args = [self.requested_auth, self.successfull_auth, self.address]
+        return type(self).__name__ + "(" + ", ".join(map(str, args)) + ")"
+
+
 
 
 type_defs = """
