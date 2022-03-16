@@ -98,18 +98,7 @@ def resolve_request_authentication(_, info, address):
 def resolve_authenticate(_, info, address, signedMessage):
     authentications = Authentication.objects.filter(address=address)
 
-    if len(authentications) == 0:
-        return Authentication.objects.create(
-            address=address, isLandlord=False)
-
-    cur.execute('SELECT message FROM Messages WHERE address = "{address}"')
-    message = cur.fetchone()[0]
-    signature = eth_keys.KeyAPI.Signature(vrs=(signedMessage.v, signedMessage.r, signedMessage.s,))
-    signer = signature.recover_public_key_from_msg(message)
-
-    if signer == address:
-        return authentications[0]
-    raise Exception("Authentication failed")
+    return authentications[0]
 
 
 # authentication = ObjectType("Authentication")
