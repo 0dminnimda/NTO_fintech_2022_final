@@ -7,4 +7,6 @@ class Authentication(models.Model):
     isLandlord = models.BooleanField("isLandlord")
 
     def __str__(self):
-        return str(type(self)) + "(" + self.address + ", " + self.isLandlord + ")"
+        return (
+            type(self).__name__ + "(" + str(self.address)
+            + ", " + str(self.isLandlord) + ")")

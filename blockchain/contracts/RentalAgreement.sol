@@ -8,20 +8,30 @@ struct Sign {
 }
 
 contract RentalAgreement {
-    uint roomInternalId_;
-    uint deadline_;
-    uint rentalRate_;
-    uint billingPeriodDuration_;
-    uint billingsCount_;
-    uint rentStartTime_;
-    uint rentEndTime_;
+    uint256 roomInternalId_;
+    uint256 deadline_;
+    uint256 rentalRate_;
+    uint256 billingPeriodDuration_;
+    uint256 billingsCount_;
+    uint256 rentStartTime_;
+    uint256 rentEndTime_;
+    uint256 currentProfit_ = 0;
+    uint256 currentBillingPeriod_ = 0;
+
     address landLord_;
     address tenant_;
 
-    bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMIT_TYPEHASH = keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)");
+    bytes32 private DOMAIN_SEPARATOR;
+    bytes32 private constant PERMIT_TYPEHASH = keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)");
+    bytes32 private constant TICKET_TYPEHASH = keccak256("Ticket(uint256 deadline,uint256 nonce,uint256 value)");
 
-    constructor (uint roomInternalId) {
+    address[] private cashiers;
+    mapping(address => uint256) private cashierNonce;
+    mapping(address => bool) private cashierStatus;
+
+    event PurchasePayment(uint256 amount);
+
+    constructor (uint256 roomInternalId) {
         landLord_ = msg.sender;
         roomInternalId_ = roomInternalId;
         DOMAIN_SEPARATOR = keccak256(abi.encode(
@@ -32,7 +42,7 @@ contract RentalAgreement {
         ));
     }
 
-    function rent (uint deadline, address tenant, uint rentalRate, uint billingPeriodDuration, uint billingsCount, Sign calldata landlordSign) payable public {
+    function rent (uint256 deadline, address tenant, uint256 rentalRate, uint256 billingPeriodDuration, uint256 billingsCount, Sign calldata landlordSign) payable public {
         if (tenant_ != address(0)) revert("The contract is being in not allowed state");
 
         bytes32 digest = keccak256(abi.encodePacked(
@@ -64,6 +74,70 @@ contract RentalAgreement {
         billingsCount_ = billingsCount;
         rentStartTime_ = block.timestamp;
         rentEndTime_ = rentStartTime_ + billingPeriodDuration * billingsCount;
+    }
+
+    function addCashier (address addr) public {
+        if (msg.sender != tenant_) revert("You are not a tenant");
+        if (addr == landLord_) revert("The landlord cannot become a cashier");
+        if (addr == address(0)) revert("Zero address cannot become a cashier");
+
+        cashiers.push(addr);
+        cashierNonce[addr] += 1;
+        cashierStatus[addr] = true;
+    }
+
+    function removeCashier (address cashierAddr) public {
+        if (msg.sender != tenant_) revert("You are not a tenant");
+        if (!cashierStatus[cashierAddr]) revert("Unknown cashier");
+
+        for (uint256 i = 0; i < cashiers.length; i += 1) {
+            if (cashiers[i] == cashierAddr) {
+                cashiers[i] = cashiers[cashiers.length - 1];
+                cashiers.pop();
+                cashierStatus[cashierAddr] = false;
+                return;
+            }
+        }
+    }
+
+    function getCashierNonce (address cashierAddr) view public returns (uint) {
+        if (cashierStatus[cashierAddr]) return cashierNonce[cashierAddr];
+        return 0;
+    }
+
+    function getCashiersList () view public returns (address[] memory) { return cashiers; }
+
+    function pay (uint256 deadline, uint256 nonce, uint256 value, Sign calldata cashierSign) payable public {
+        if (rentEndTime_ <= block.timestamp) revert("The contract is being in not allowed state");
+        uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
+        if (currentBillingPeriod_ != newBillingPeriod) {
+            if (currentProfit_ < rentalRate_ || newBillingPeriod - currentBillingPeriod_ > 1) revert("The contract is being in not allowed state");
+            else {
+                currentProfit_ = 0;
+                currentBillingPeriod_ = newBillingPeriod;
+            }
+        }
+
+        if (deadline < block.timestamp) revert("The operation is outdated");
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            keccak256(abi.encode(
+                TICKET_TYPEHASH,
+                deadline,
+                nonce,
+                value
+            ))
+        ));
+        address cashier = ecrecover(digest, cashierSign.v, cashierSign.r, cashierSign.s);
+
+        if (!cashierStatus[cashier]) revert("Unknown cashier");
+        if (cashierNonce[cashier] != nonce) revert("Invalid nonce");
+        if (value != msg.value) revert("Invalid value");
+
+        cashierNonce[cashier] += 1;
+        currentProfit_ += msg.value;
+        emit PurchasePayment(value);
     }
 
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }

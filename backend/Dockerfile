@@ -1,14 +1,7 @@
-# Dockerfile example
-FROM python:3.9-alpine
-
-ENV VIRTUAL_ENV=/venv
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Install dependencies:
-COPY requirements.txt .
+FROM python:3
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+RUN pip install -U pip
+COPY requirements.txt /
 RUN pip install -r requirements.txt
-
-# Run the application:
-# COPY myapp.py .
-# CMD ["python", "myapp.py"]
+COPY . /
