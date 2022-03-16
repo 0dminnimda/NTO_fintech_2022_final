@@ -105,8 +105,6 @@ contract RentalAgreement {
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
     function pay (uint deadline, uint nonce, uint value, Sign calldata cashierSign) payable public {
-        if (deadline < block.timestamp) revert("The operation is outdated");
-
         bytes32 digest = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
