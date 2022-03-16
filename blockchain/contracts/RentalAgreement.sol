@@ -105,7 +105,7 @@ contract RentalAgreement {
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
     function pay (uint256 deadline, uint256 nonce, uint256 value, Sign calldata cashierSign) payable public {
-        emit PurchasePayment(50);
+        emit PurchasePayment(120);
     }
 
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }
