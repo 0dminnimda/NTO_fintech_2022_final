@@ -1,12 +1,23 @@
 version: '3.7'
 services:
-  web:
-    ports:
-      - "69:69"
-    build:
-      context: frontend
-      dockerfile: Dockerfile
-    environment:
-      - LANDLORD_ADDRESS
-      - RPC_URL
-    container_name: solution-web
+    frontend:
+        ports:
+            - "69:69"
+        build:
+            context: frontend
+            dockerfile: Dockerfile
+        environment:
+            - LANDLORD_ADDRESS
+            - RPC_URL
+        container_name: solution-frontend
+
+    backend:
+        ports:
+            - "420:420"
+        build:
+            context: backend
+            dockerfile: Dockerfile
+        environment:
+            - LANDLORD_ADDRESS
+            - RPC_URL
+        container_name: solution-backend
