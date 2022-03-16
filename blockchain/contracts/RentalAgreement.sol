@@ -8,13 +8,13 @@ struct Sign {
 }
 
 contract RentalAgreement {
-    uint roomInternalId_;
-    uint deadline_;
-    uint rentalRate_;
-    uint billingPeriodDuration_;
-    uint billingsCount_;
-    uint rentStartTime_;
-    uint rentEndTime_;
+    uint256 roomInternalId_;
+    uint256 deadline_;
+    uint256 rentalRate_;
+    uint256 billingPeriodDuration_;
+    uint256 billingsCount_;
+    uint256 rentStartTime_;
+    uint256 rentEndTime_;
     address landLord_;
     address tenant_;
 
@@ -28,7 +28,7 @@ contract RentalAgreement {
 
     event PurchasePayment(uint256 value);
 
-    constructor (uint roomInternalId) {
+    constructor (uint256 roomInternalId) {
         landLord_ = msg.sender;
         roomInternalId_ = roomInternalId;
         DOMAIN_SEPARATOR = keccak256(abi.encode(
@@ -39,7 +39,7 @@ contract RentalAgreement {
         ));
     }
 
-    function rent (uint deadline, address tenant, uint rentalRate, uint billingPeriodDuration, uint billingsCount, Sign calldata landlordSign) payable public {
+    function rent (uint256 deadline, address tenant, uint256 rentalRate, uint256 billingPeriodDuration, uint256 billingsCount, Sign calldata landlordSign) payable public {
         if (tenant_ != address(0)) revert("The contract is being in not allowed state");
 
         bytes32 digest = keccak256(abi.encodePacked(
@@ -104,7 +104,9 @@ contract RentalAgreement {
 
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
-    function pay (uint deadline, uint nonce, uint value, Sign calldata cashierSign) payable public {
+    function pay (uint256 deadline, uint256 nonce, uint256 value, Sign calldata cashierSign) payable public {
+        if (deadline < block.timestamp) revert("The operation is outdated");
+
         bytes32 digest = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
