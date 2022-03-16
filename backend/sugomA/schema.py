@@ -5,6 +5,10 @@ from ariadne import (MutationType, ObjectType, QueryType, gql,
 
 from sugomA.AmogusApp.models import Authentication
 
+
+code_smell = {}  # type: ignore
+
+
 type_defs = """
 type Query {
     authentication: Authentication
@@ -71,13 +75,23 @@ mutation = MutationType()
 
 @mutation.field("requestAuthentication")
 def resolve_request_authentication(_, info, address):
+    code_smell["requested_auth"] = True
+
     return "super_" + secrets.token_urlsafe(30) + "_secret"
 
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
-    return Authentication.objects.create(
-        address=address, isLandlord=False)
+    raise Exception("A")
+    # if not code_smell.get("requested_auth", False):
+
+    authentications = Authentication.objects.filter(address=address)
+
+    if len(authentications) == 0:
+        return Authentication.objects.create(
+            address=address, isLandlord=False)
+
+    return authentications[0]
 
 
 # authentication = ObjectType("Authentication")
