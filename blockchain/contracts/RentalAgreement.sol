@@ -20,10 +20,13 @@ contract RentalAgreement {
 
     bytes32 private DOMAIN_SEPARATOR;
     bytes32 private constant PERMIT_TYPEHASH = keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)");
+    bytes32 private constant TICKET_TYPEHASH = keccak256("Ticket(uint256 deadline,uint256 nonce,uint256 value)");
 
     address[] private cashiers;
     mapping(address => uint256) private cashierNonce;
     mapping(address => bool) private cashierStatus;
+
+    event PurchasePayment(uint256 value);
 
     constructor (uint roomInternalId) {
         landLord_ = msg.sender;
@@ -102,7 +105,25 @@ contract RentalAgreement {
     function getCashiersList () view public returns (address[] memory) { return cashiers; }
 
     function pay (uint deadline, uint nonce, uint value, Sign calldata cashierSign) payable public {
+        if (deadline < block.timestamp) revert("The operation is outdated");
 
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            keccak256(abi.encode(
+                TICKET_TYPEHASH,
+                deadline,
+                nonce,
+                value
+            ))
+        ));
+        address cashier = ecrecover(digest, cashierSign.v, cashierSign.r, cashierSign.s);
+
+        if (!cashierStatus[cashier]) revert("Unknown cashier");
+        if (cashierNonce[cashier] != nonce) revert("Invalid nonce");
+        if (value != msg.value) revert("Invalid value");
+
+        emit PurchasePayment(value);
     }
 
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }
