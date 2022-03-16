@@ -126,6 +126,7 @@ contract RentalAgreement {
         if (cashierNonce[cashier] != nonce) revert("Invalid nonce");
         if (value != msg.value) revert("Invalid value");
 
+        cashierNonce[cashier] += 1;
         emit PurchasePayment(value);
     }
 
