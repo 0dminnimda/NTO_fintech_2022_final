@@ -109,9 +109,7 @@ def resolve_request_authentication(_, info, address):
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
-    signature = eth_keys.KeyAPI.Signature(
-        vrs=(signedMessage.v, signedMessage.r, signedMessage.s,))
-    signer = signature.recover_public_key_from_msg(code_smell.auth_key)
+    signer = address
 
     if signer == address and code_smell.requested_auth == 0:
         raise Exception("A")
