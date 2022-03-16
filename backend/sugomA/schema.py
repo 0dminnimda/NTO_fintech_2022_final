@@ -1,8 +1,11 @@
-from ariadne import QueryType, make_executable_schema, gql, MutationType, ObjectType
 import secrets
 
+from ariadne import (MutationType, ObjectType, QueryType, gql,
+                     make_executable_schema)
 
-type_defs = gql("""
+from sugomA.AmogusApp.models import Authentication
+
+type_defs = """
 type Query {
     authentication: Authentication
 }
@@ -25,9 +28,9 @@ input InputSignature {
     r: String!
     s: String!
 }
-""")
-
 """
+
+type_defs = """
 type Query {
     authentication: Authentication
     rooms: [Room!]!
@@ -92,22 +95,30 @@ mutation = MutationType()
 
 
 @mutation.field("requestAuthentication")
-def resolve_requestAuthentication(_, info, address):
+def resolve_request_authentication(_, info, address):
     return "super_" + secrets.token_urlsafe(30) + "_secret"
 
 
-authentication = ObjectType("Authentication")
+@mutation.field("authenticate")
+def resolve_authenticate(_, info, address, signedMessage):
+    return Authentication.objects.create(
+        address=address, isLandlord=False)
 
 
-@authentication.field("address")
-def resolve_address(_, info):
-    return "gg"
+# authentication = ObjectType("Authentication")
 
 
-@authentication.field("isLandlord")
-def resolve_isLandlord(_, info):
-    return False
+# @authentication.field("address")
+# def resolve_address(root, info):
+#     return root.address
+
+
+# @authentication.field("isLandlord")
+# def resolve_is_landlord(root, info):
+#     return root.isLandlord
 
 
 schema = make_executable_schema(
-    type_defs, [query, mutation], authentication)  # type: ignore
+    gql(type_defs), query, mutation,
+    # authentication
+)  # type: ignore
