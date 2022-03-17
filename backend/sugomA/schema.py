@@ -11,7 +11,7 @@ from eth_keys.exceptions import BadSignature, ValidationError
 
 from sugomA.AmogusApp.models import Authentication, Room
 
-from .exceptions import AuthenticationFailed, InvalidRoomParams
+from .exceptions import AuthenticationFailed, InvalidRoomParams, UnauthorizedAccess, NotLandlordAccess
 
 
 class Hack:
@@ -180,6 +180,13 @@ def resolve_authenticate(_, info, address, signedMessage):
 
 @mutation.field("createRoom")
 def resolve_create_room(_, info, room):
+    if not code_smell["successfull_auth"]:
+        raise UnauthorizedAccess
+
+    authentication = Authentication.objects.get(address=code_smell["address"])
+    if not authentication.isLandlord:
+        raise NotLandlordAccess
+
     if room["area"] <= 0:
         raise InvalidRoomParams
 
