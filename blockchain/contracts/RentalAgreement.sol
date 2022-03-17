@@ -142,10 +142,7 @@ contract RentalAgreement {
         emit PurchasePayment(value);
     }
 
-    function getTenantProfit () view public returns (uint256) {
-        if (currentProfit_ < rentalRate_) return 0;
-        return currentProfit_ - rentalRate_;
-    }
+    function getTenantProfit () view public returns (uint256) { return address(this).balance - getLandlordProfit(); }
 
     function withdrawTenantProfit () public {
         uint256 profit = getTenantProfit();
