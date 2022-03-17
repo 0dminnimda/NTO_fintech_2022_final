@@ -1,0 +1,255 @@
+import json
+from typing import cast
+
+from ariadne import format_error
+from ariadne.constants import DATA_TYPE_JSON, DATA_TYPE_MULTIPART
+from ariadne.exceptions import HttpBadRequestError
+from ariadne.file_uploads import combine_multipart_data
+from ariadne.graphql import graphql_sync
+from ariadne_django.views.base import BaseGraphQLView
+from django.conf import settings
+from django.contrib import admin
+from django.http import HttpRequest, HttpResponseBadRequest, JsonResponse
+from django.http.response import JsonResponse
+from django.urls import path
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from graphql import GraphQLSchema
+
+from .AmogusApp.views import check, home
+from .schema import code_smell, schema
+
+mapping = {"A": {"message": "Authentication failed"}}
+
+
+def my_format_error(error, debug: bool = False) -> dict:
+    # formatted = error.formatted
+
+    result = mapping.get(error.message, None)
+    if result is not None:
+        return result
+
+    return format_error(error, debug)
+
+
+# @method_decorator(csrf_exempt, name="dispatch")
+class GraphQLView(BaseGraphQLView):
+    def dispatch(self, *args, **kwargs):
+        if not self.schema:
+            raise ValueError("GraphQLView was initialized without schema.")
+        try:
+            return super().dispatch(*args, **kwargs)
+        except HttpBadRequestError as error:
+            return HttpResponseBadRequest(error.message)
+
+    def post(self, request: HttpRequest, *args, **kwargs):
+        code_smell.storage = request.session
+        print(code_smell)
+
+        try:
+            data = extract_data_from_request(request)
+        except HttpBadRequestError as error:
+            return HttpResponseBadRequest(error.message)
+
+        code_smell.storage = request.session
+
+        print(code_smell)
+        # code_smell["a"] += 1
+        # print(request.session.items())
+
+        success, result = graphql_sync(
+            cast(GraphQLSchema, self.schema), data, **get_kwargs_graphql(request))
+        status_code = 200 if success else 400
+
+        if code_smell["requested_auth"] > 0:
+            code_smell["requested_auth"] -= 1
+
+        if "data" in result and "errors" in result:
+            del result["data"]
+
+        response = JsonResponse(result, status=status_code)
+
+        for n, v in code_smell.storage.items():
+            response.set_cookie(n, v)
+
+        print("-"*50)
+        print("-"*50)
+
+        return response
+
+
+def extract_data_from_request(request: HttpRequest):
+    content_type = request.content_type or ""
+    content_type = content_type.split(";")[0]
+
+    if content_type == DATA_TYPE_JSON:
+        try:
+            return json.loads(request.body)
+        except (TypeError, ValueError) as ex:
+            raise HttpBadRequestError(
+                "Request body is not a valid JSON") from ex
+    if content_type == DATA_TYPE_MULTIPART:
+        try:
+            operations = json.loads(request.POST.get("operations", "{}"))
+        except (TypeError, ValueError) as ex:
+            raise HttpBadRequestError(
+                "Request 'operations' multipart field is not a valid JSON") from ex
+        try:
+            files_map = json.loads(request.POST.get("map", "{}"))
+        except (TypeError, ValueError) as ex:
+            raise HttpBadRequestError(
+                "Request 'map' multipart field is not a valid JSON") from ex
+
+        return combine_multipart_data(operations, files_map, request.FILES)
+
+    raise HttpBadRequestError(
+        "Posted content must be of type {} or {}".format(
+            DATA_TYPE_JSON, DATA_TYPE_MULTIPART))
+
+
+def get_context_for_request(context_value, request: HttpRequest):
+    if callable(context_value):
+        return context_value(request)
+    return context_value or {"request": request}
+
+
+def get_extensions_for_request(extensions, request: HttpRequest, context):
+    if callable(extensions):
+        return extensions(request, context)
+    return extensions
+
+
+def get_kwargs_graphql(request: HttpRequest) -> dict:
+    context_value = get_context_for_request(None, request)
+    extensions = get_extensions_for_request(None, request, context_value)
+
+    # http_method_names = ["get", "post", "options"]
+    # template_name = "ariadne_django/graphql_playground.html"
+    # playground_options: Optional[dict] = None
+    # schema: Optional[GraphQLSchema] = None
+
+    return {
+        "context_value": context_value,
+        "root_value": None,
+        "validation_rules": None,
+        "debug": settings.DEBUG,
+        "introspection": True,
+        "logger": None,
+        "error_formatter": my_format_error,
+        "extensions": extensions,
+        "middleware": None,
+    }
+
+
+@csrf_exempt
+def graphql_view(request: HttpRequest):
+    code_smell.storage = request.session
+    print(code_smell)
+
+    try:
+        data = extract_data_from_request(request)
+    except HttpBadRequestError as error:
+        return HttpResponseBadRequest(error.message)
+
+    code_smell.storage = request.session
+
+    print(code_smell)
+    # code_smell["a"] += 1
+    # print(request.session.items())
+
+    success, result = graphql_sync(
+        cast(GraphQLSchema, schema), data, **get_kwargs_graphql(request))
+    status_code = 200 if success else 400
+
+    if code_smell["requested_auth"] > 0:
+        code_smell["requested_auth"] -= 1
+
+    if "data" in result and "errors" in result:
+        del result["data"]
+
+    response = JsonResponse(result, status=status_code)
+
+    for n, v in code_smell.storage.items():
+        response.set_cookie(n, v)
+
+    print("-"*50)
+    print("-"*50)
+
+    return response
+
+
+# https://github.com/mirumee/ariadne/search?q=post
+
+urlpatterns = [
+    path("", csrf_exempt(home)),
+    path("admin/", admin.site.urls),
+    # path('graphql/', my_GraphQLView, name='graphql'),
+    path('graphql',
+         graphql_view,
+        #  csrf_exempt(
+        #      GraphQLView.as_view(
+        #          schema=schema, error_formatter=my_format_error)),
+         # track(GraphQLView.as_view(schema=schema, error_formatter=my_format_error)),
+         name='graphql'),
+    path("check", csrf_exempt(check)),
+    # path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+]
+
+"""
+
+private_key = "0x29e806f1d1a1e1ca473cd00daf213e51ae70136ff486e1b55a19745e059b96de"
+
+# query {
+#   authentication { address, isLandlord }
+# }
+
+# mutation {
+#   message: requestAuthentication(
+#     address: "<address-1>"
+#   )
+# }
+
+# mutation {
+#   authentication: authenticate(
+#     address: "0xCe746b0E2aF26F13C8513b2f985746D65c906f72"
+#     signedMessage: {
+#       v: "0x1b"
+#       r: "0xbe4d9d4de333ca1d6b2697bd5614e7d6006bca8fb9b01f915c04f80dbd579868"
+#       s: "0x2f6237bcdd563c0c560faeb3053fb9b0b646317264d2f279c708e118b2ce2fba"}
+#   ) {
+#     address
+#     isLandlord
+#   }
+# }
+
+
+
+
+query{countries{name}}
+http://127.0.0.1:6969/graphql?query=query{authentication{address,isLandlord}}
+query=query{authentication{address,isLandlord}}
+
+# Write your query or mutation here
+
+query {
+  authentication { address, isLandlord }
+}
+
+# mutation {
+#   message: requestAuthentication(
+#     address: "<address-1>"
+#   )
+# }
+
+# mutation {
+#   authentication: authenticate(
+#     address: "<addr>"
+#     signedMessage: {v: "sdf" r: "d" s: "sdf"}
+#   ) {
+#     address
+#     isLandlord
+#   }
+# }
+
+
+"""
