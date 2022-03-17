@@ -182,7 +182,7 @@ contract RentalAgreement {
         }
         else {
             uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
-            if (currentBillingPeriod_ == newBillingPeriod || (newBillingPeriod - currentBillingPeriod_ == 1 && currentProfit_ >= rentalRate_)) revert("The contract is being in not allowed state");
+            if (currentBillingPeriod_ == newBillingPeriod || currentProfit_ >= rentalRate_) revert("The contract is being in not allowed state");
             else selfdestruct(landLord_);
         }
     }
