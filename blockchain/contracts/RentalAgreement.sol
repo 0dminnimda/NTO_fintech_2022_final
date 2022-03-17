@@ -195,8 +195,8 @@ contract RentalAgreement {
         address tenant = ecrecover(digest, tenantSign.v, tenantSign.r, tenantSign.s);
         if (tenant != tenant_) revert("Invalid tenant sign");
 
-        withdrawTenantProfit();
-        selfdestruct(landLord_);
+        withdrawLandlordProfit();
+        selfdestruct(tenant_);
     }
 
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }
