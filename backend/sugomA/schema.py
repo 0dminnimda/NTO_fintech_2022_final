@@ -113,7 +113,7 @@ query = QueryType()
 
 @query.field("authentication")
 def resolve_authentication(_, info):
-    print("resolve_request_authentication")
+    print("authentication", code_smell["successfull_auth"], Authentication.objects.filter(address=code_smell["address"]), code_smell)
     if not code_smell["successfull_auth"]:
         return None
 
@@ -125,11 +125,11 @@ mutation = MutationType()
 
 @mutation.field("requestAuthentication")
 def resolve_request_authentication(_, info, address):
-    print("requestAuthentication", address)
     code_smell.reset()
     code_smell["requested_auth"] = 2
 
     message = str(time.time()) + "_" + secrets.token_urlsafe(30)
+    print("requestAuthentication", address, message, code_smell)
     code_smell["auth_message"] = message
 
     # user-side code to generate accurate authenticate() arguments:
@@ -144,11 +144,11 @@ def resolve_request_authentication(_, info, address):
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
-    print("authenticate", address, signedMessage)
     recovered_address = Account.recover_message(
         encode_defunct(text=code_smell["auth_message"]),
         vrs=[int(i, 16) for i in signedMessage.values()])
 
+    print("authenticate", address, recovered_address, signedMessage, code_smell)
     if recovered_address != address or code_smell["requested_auth"] != 1:
         print(recovered_address, address, code_smell["requested_auth"])
         code_smell.reset()
