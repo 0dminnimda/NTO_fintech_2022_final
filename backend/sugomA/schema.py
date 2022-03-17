@@ -3,9 +3,10 @@ import secrets
 import time
 from dataclasses import _FIELDS, Field, dataclass
 
-import eth_keys
 from ariadne import (MutationType, ObjectType, QueryType, gql,
                      make_executable_schema)
+from eth_account import Account
+from eth_account.messages import encode_defunct
 
 from sugomA.AmogusApp.models import Authentication
 
@@ -103,16 +104,36 @@ mutation = MutationType()
 @mutation.field("requestAuthentication")
 def resolve_request_authentication(_, info, address):
     code_smell.requested_auth = 2
-    key = str(time.time()) + "_" + secrets.token_urlsafe(30)
-    code_smell.auth_key = key.encode('utf-8')
-    return key
+
+    message = str(time.time()) + "_" + secrets.token_urlsafe(30)
+    code_smell.auth_message = message
+
+    # user-side code to generate accurate authenticate() arguments:
+    # private_key = "0x" + secrets.token_hex(32)
+    # acc = Account.from_key(private_key)
+    # sig = Account.sign_message(encode_defunct(text=message), private_key)
+    # vrs = list(map(hex, (sig.v, sig.r, sig.s)))
+    # print(f"{private_key=}, {acc.address=}, {vrs=}")
+
+    return message
 
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
-    signer = address
+    # sig = eth_keys.KeyAPI.Signature(signature_bytes=(eth_keys.KeyAPI.PublicKey.from_compressed_bytes(chr(0x02).encode("utf-8")) + chr(0x02)).to_bytes())
+    # signature = eth_keys.KeyAPI.Signature(vrs=(
+    #     int(signedMessage["v"], 16),
+    #     int(signedMessage["r"], 16),
+    #     int(signedMessage["s"], 16)))
+    # public_key = signature.recover_public_key_from_msg(code_smell.auth_message)
+    # print(public_key, address)
+    # (int(signedMessage["v"], 16), int(signedMessage["r"], 16), int(signedMessage["s"], 16)))
 
-    if signer == address and code_smell.requested_auth == 0:
+    recovered_address = Account.recover_message(
+        encode_defunct(text=code_smell.auth_message),
+        vrs=[int(i, 16) for i in signedMessage.values()])
+
+    if recovered_address != address or code_smell.requested_auth != 1:
         raise Exception("A")
 
     code_smell.successfull_auth = True
