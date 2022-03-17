@@ -150,7 +150,7 @@ contract RentalAgreement {
 
     function withdrawTenantProfit () public {
         uint256 profit = getTenantProfit();
-        if (profit > 0) tenant_.send(profit);
+        if (profit > 0) tenant_.call.value(profit)();
     }
 
     function getLandlordProfit () view public returns (uint256)  {
@@ -161,7 +161,7 @@ contract RentalAgreement {
 
     function withdrawLandlordProfit () public {
         uint256 profit = getLandlordProfit();
-        if (profit > 0) landLord_.send(profit);
+        if (profit > 0) landLord_.call.value(profit)();
     }
 
     function endAgreement () public {
