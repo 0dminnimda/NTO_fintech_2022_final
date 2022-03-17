@@ -140,6 +140,30 @@ contract RentalAgreement {
         emit PurchasePayment(value);
     }
 
+    function getTenantProfit () view public returns (uint256) {
+
+    }
+
+    function withdrawTenantProfit () public {
+
+    }
+
+    function getLandlordProfit () view public returns (uint256)  {
+
+    }
+
+    function withdrawLandlordProfit () public {
+
+    }
+
+    function endAgreement () public {
+
+    }
+
+    function endAgreementManually (uint256 deadline, Sign calldata landlordSign, Sign calldata tenantSign) public {
+
+    }
+
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }
 
     function getLandlord () view public returns (address)  { return landLord_; }
