@@ -20,8 +20,8 @@ contract RentalAgreement {
 
     bool withdrewInCurrentPeriod_ = false;
 
-    address landLord_;
-    address tenant_;
+    address payable landLord_;
+    address payable tenant_;
 
     bytes32 private DOMAIN_SEPARATOR;
     bytes32 private constant PERMIT_TYPEHASH = keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)");
@@ -35,7 +35,7 @@ contract RentalAgreement {
     event PurchasePayment(uint256 amount);
 
     constructor (uint256 roomInternalId) {
-        landLord_ = msg.sender;
+        landLord_ = payable(msg.sender);
         roomInternalId_ = roomInternalId;
         DOMAIN_SEPARATOR = keccak256(abi.encode(
             keccak256("EIP712Domain(string name,string version,address verifyingContract)"),
@@ -45,7 +45,7 @@ contract RentalAgreement {
         ));
     }
 
-    function rent (uint256 deadline, address tenant, uint256 rentalRate, uint256 billingPeriodDuration, uint256 billingsCount, Sign calldata landlordSign) payable public {
+    function rent (uint256 deadline, address payable tenant, uint256 rentalRate, uint256 billingPeriodDuration, uint256 billingsCount, Sign calldata landlordSign) payable public {
         if (tenant_ != address(0)) revert("The contract is being in not allowed state");
 
         bytes32 digest = keccak256(abi.encodePacked(
@@ -147,7 +147,7 @@ contract RentalAgreement {
 
     function withdrawTenantProfit () public {
         uint256 profit = getTenantProfit();
-        if (profit) {
+        if (profit > 0) {
             (bool sent, bytes memory data) = tenant_.call{value: profit}("");
             require(sent, "Failed to send Ether");
         }
@@ -161,7 +161,7 @@ contract RentalAgreement {
 
     function withdrawLandlordProfit () public {
         uint256 profit = getLandlordProfit();
-        if (profit) {
+        if (profit > 0) {
             (bool sent, bytes memory data) = landLord_.call{value: profit}("");
             require(sent, "Failed to send Ether");
         }
@@ -183,7 +183,7 @@ contract RentalAgreement {
         address landlord = ecrecover(digest, landlordSign.v, landlordSign.r, landlordSign.s);
         if (landlord != landLord_) revert("Invalid landlord sign");
 
-        bytes32 digest = keccak256(abi.encodePacked(
+        digest = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
             keccak256(abi.encode(END_TYPEHASH, deadline))
