@@ -167,8 +167,10 @@ contract RentalAgreement {
 
     function withdrawLandlordProfit () public {
         uint256 profit = getLandlordProfit();
-        if (profit > 0) landLord_.transfer(profit);
-        totalLandlordWithdrawals_ += profit;
+        if (profit > 0) {
+            landLord_.transfer(profit);
+            totalLandlordWithdrawals_ += profit;
+        }
     }
 
     function endAgreement () public {
@@ -180,7 +182,6 @@ contract RentalAgreement {
         }
 
         uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
-        if (newBillingPeriod >= billingsCount_) newBillingPeriod = billingsCount_ - 1;
         if (currentBillingPeriod_ == newBillingPeriod || (newBillingPeriod - currentBillingPeriod_ == 1 && currentProfit_ >= rentalRate_)) revert("The contract is being in not allowed state");
         withdrawLandlordProfit();
         selfdestruct(tenant_);
