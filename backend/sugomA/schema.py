@@ -130,6 +130,7 @@ def resolve_authentication(_, info):
 
 @query.field("room")
 def resolve_room(_, info, id):
+    print("room", id)
     return Room.objects.get(id=id)
 
 
