@@ -77,6 +77,7 @@ contract RentalAgreement {
         billingsCount_ = billingsCount;
         rentStartTime_ = block.timestamp;
         rentEndTime_ = rentStartTime_ + billingPeriodDuration * billingsCount;
+        currentProfit_ = rentalRate_;
     }
 
     function addCashier (address addr) public {
