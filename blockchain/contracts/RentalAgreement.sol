@@ -118,7 +118,7 @@ contract RentalAgreement {
             else {
                 currentProfit_ = 0;
                 currentBillingPeriod_ = newBillingPeriod;
-                withdrewInCurrentPeriod_ = true;
+                withdrewInCurrentPeriod_ = false;
             }
         }
 
