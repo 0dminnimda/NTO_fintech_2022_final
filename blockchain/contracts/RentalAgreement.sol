@@ -178,13 +178,15 @@ contract RentalAgreement {
 
         if (block.timestamp >= rentEndTime_) {
             withdrawLandlordProfit();
-            selfdestruct(tenant_);
+            withdrawTenantProfit();
+            selfdestruct()
         }
 
         uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
         if (currentBillingPeriod_ == newBillingPeriod || (newBillingPeriod - currentBillingPeriod_ == 1 && currentProfit_ >= rentalRate_)) revert("The contract is being in not allowed state");
         withdrawLandlordProfit();
-        selfdestruct(tenant_);
+        withdrawTenantProfit();
+        selfdestruct()
     }
 
     function endAgreementManually (uint256 deadline, Sign calldata landlordSign, Sign calldata tenantSign) public {
@@ -208,7 +210,8 @@ contract RentalAgreement {
         if (tenant != tenant_) revert("Invalid tenant sign");
 
         withdrawLandlordProfit();
-        selfdestruct(tenant_);
+        withdrawTenantProfit();
+        selfdestruct()
     }
 
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }
