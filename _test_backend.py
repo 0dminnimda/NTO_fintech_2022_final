@@ -78,6 +78,11 @@ def test2():
     room_id = son["data"]["createRoom"].pop("id")
     asserter(data, need, son, text)
 
+    data = 'query {room(id: "' + room_id + '") {id, internalName, area, location}}'  # noqa
+    need = '{"data": {"room": {"id": "' + room_id + '", "internalName": "some-name", "area": 100.5, "location": "some location"}}}'  # noqa
+    son, text = poster(session, data)
+    asserter(data, need, text)
+
     data = 'mutation {createRoom(room: {internalName: "some-name", area: -1, location: "some location"}) {id, internalName, area, location}}'  # noqa
     need = '{"errors": [{"message": "The room area must be greater than zero"}]}'  # noqa
     son, text = poster(session, data)
