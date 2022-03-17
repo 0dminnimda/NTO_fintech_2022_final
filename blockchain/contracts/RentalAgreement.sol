@@ -172,6 +172,8 @@ contract RentalAgreement {
     }
 
     function endAgreement () public {
+        if (tenant_ == address(0)) revert("The contract is being in not allowed state");
+
         if (block.timestamp >= rentEndTime_) {
             withdrawLandlordProfit();
             selfdestruct(tenant_);
