@@ -19,5 +19,5 @@ class Room(models.Model):
     area = models.FloatField("area")
     location = models.TextField("location", default="")
 
-    contractAddress = models.TextField("contractAddress", null=True)
-    publicName = models.TextField("publicName", null=True)
+    contractAddress = models.TextField("contractAddress", blank=True, null=True)
+    publicName = models.TextField("publicName", blank=True, null=True)
