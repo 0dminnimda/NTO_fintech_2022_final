@@ -1,7 +1,6 @@
 import os
 import secrets
 import time
-from dataclasses import _FIELDS, Field, dataclass
 
 from ariadne import (MutationType, ObjectType, QueryType, gql,
                      make_executable_schema)
@@ -11,27 +10,64 @@ from eth_account.messages import encode_defunct
 from sugomA.AmogusApp.models import Authentication
 
 
-@dataclass
 class Hack:
-    requested_auth: int = 0
-    auth_message: str = "<invalid>"
-    successfull_auth: bool = False
-    address: str = "<invalid>"
+    storage: dict
+
+    attrs = {
+        "requested_auth": 0,
+        "auth_message": "<invalid>",
+        "successfull_auth": False,
+        "address": "<invalid>",
+    }
+
+    # requested_auth: int = 0
+    # auth_message: str = "<invalid>"
+    # successfull_auth: bool = False
+    # address: str = "<invalid>"
+
+    def __init__(self, storage):
+        self.storage = storage
+        self.reset()
 
     def reset(self):
-        for name in getattr(self, _FIELDS).keys():
+        for name in self.attrs.keys():
             self.reset_attr(name)
 
-    def reset_attr(self, attr: str) -> None:
-        field: Field = getattr(self, _FIELDS)[attr]
-        setattr(self, field.name, field.default)
+    def reset_attr(self, name):
+        default = self.attrs[name]
+        self[name] = default
+        return default
 
-    # storage: dict
-    # def __getattr__(self, name: str):
-    #     self.storage
+    def __getitem__(self, name, default=object()):
+        result = self.storage.get(name, default)
+        if result is default:
+            return self.reset_attr(name)
+        return result
+
+    def __setitem__(self, name, value):
+        self.storage[name] = value
+
+    def __str__(self):
+        args = [f"{name}={self[name]}" for name in self.attrs.keys()]
+        return type(self).__name__ + "(" + ", ".join(args) + ")"
+
+    # def __getattribute__(self, name: str, default=object()):
+    #     if name not in super().__getattribute__(_FIELDS):
+    #         return super().__getattribute__(name)
+
+        # result = super().__getattribute__("storage").get(name, default)
+        # if result is default:
+        #     return super().__getattribute__("reset_attr")(name)
+        # return result
+
+    # def __setattr__(self, name: str, value):
+    #     if name in super().__getattribute__(_FIELDS) and name != "storage":
+    #         super().__getattribute__("storage")[name] = value
+    #     else:
+    #         super().__setattr__(name, value)
 
 
-code_smell = Hack()
+code_smell = Hack({})
 
 
 type_defs = """
@@ -92,10 +128,10 @@ query = QueryType()
 
 @query.field("authentication")
 def resolve_authentication(_, info):
-    if not code_smell.successfull_auth:
+    if not code_smell["successfull_auth"]:
         return None
 
-    return Authentication.objects.get(address=code_smell.address)
+    return Authentication.objects.get(address=code_smell["address"])
 
 
 mutation = MutationType()
@@ -103,10 +139,10 @@ mutation = MutationType()
 
 @mutation.field("requestAuthentication")
 def resolve_request_authentication(_, info, address):
-    code_smell.requested_auth = 2
+    code_smell["requested_auth"] = 2
 
     message = str(time.time()) + "_" + secrets.token_urlsafe(30)
-    code_smell.auth_message = message
+    code_smell["auth_message"] = message
 
     # user-side code to generate accurate authenticate() arguments:
     # private_key = "0x" + secrets.token_hex(32)
@@ -121,14 +157,14 @@ def resolve_request_authentication(_, info, address):
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
     recovered_address = Account.recover_message(
-        encode_defunct(text=code_smell.auth_message),
+        encode_defunct(text=code_smell["auth_message"]),
         vrs=[int(i, 16) for i in signedMessage.values()])
 
-    if recovered_address != address or code_smell.requested_auth != 1:
+    if recovered_address != address or code_smell["requested_auth"] != 1:
         raise Exception("A")
 
-    code_smell.successfull_auth = True
-    code_smell.address = address
+    code_smell["successfull_auth"] = True
+    code_smell["address"] = address
     authentications = Authentication.objects.filter(address=address)
 
     if len(authentications) != 0:  # should be 1

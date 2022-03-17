@@ -33,8 +33,8 @@ def track(view):
     def wrapper(*args, **kwargs):
         response = view(*args, **kwargs)
 
-        if code_smell.requested_auth > 0:
-            code_smell.requested_auth -= 1
+        if code_smell["requested_auth"] > 0:
+            code_smell["requested_auth"] -= 1
 
         if isinstance(response, JsonResponse):
             data = json.loads(response.content)
