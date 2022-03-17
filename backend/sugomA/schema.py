@@ -26,6 +26,7 @@ class Hack:
         self.reset()
 
     def reset(self):
+        print("-"*5 + "reset" + "-"*5)
         for name in self.attrs.keys():
             self.reset_attr(name)
 
