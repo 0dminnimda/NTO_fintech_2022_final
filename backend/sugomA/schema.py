@@ -162,11 +162,10 @@ def resolve_authenticate(_, info, address, signedMessage):
     if len(authentications) != 0:  # should be 1
         return authentications[0]
 
-    isLandlord = os.environ.get("LANDLORD_ADDRESS", None)
-    print("isLandlord", isLandlord)
-    isLandlord = "false" if isLandlord is None else isLandlord
+    isLandlord = os.environ.get("LANDLORD_ADDRESS", "")
+    print("isLandlord", address, isLandlord)
     return Authentication.objects.create(
-        address=address, isLandlord=json.loads(isLandlord))
+        address=address, isLandlord=(address == isLandlord))
 
 
 # authentication = ObjectType("Authentication")
