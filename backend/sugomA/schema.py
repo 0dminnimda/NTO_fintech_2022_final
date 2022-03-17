@@ -150,7 +150,7 @@ def resolve_authenticate(_, info, address, signedMessage):
 
     print("authenticate", address, recovered_address, signedMessage, code_smell)
     if recovered_address != address or code_smell["requested_auth"] != 1:
-        print(recovered_address, address, code_smell["requested_auth"])
+        print("faulture", recovered_address, address, code_smell["requested_auth"])
         code_smell.reset()
         raise Exception("A")
 
@@ -162,7 +162,7 @@ def resolve_authenticate(_, info, address, signedMessage):
         return authentications[0]
 
     isLandlord = os.environ.get("LANDLORD_ADDRESS", None)
-    print(isLandlord)
+    print("isLandlord", isLandlord)
     isLandlord = "false" if isLandlord is None else isLandlord
     return Authentication.objects.create(
         address=address, isLandlord=json.loads(isLandlord))
