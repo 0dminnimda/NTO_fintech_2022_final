@@ -103,6 +103,8 @@ def graphql_view(request: HttpRequest):
     except HttpBadRequestError as error:
         return HttpResponseBadRequest(error.message)
 
+    print("#"*5, "request", data)
+
     code_smell.storage = request.COOKIES
 
     success, result = graphql_sync(
@@ -116,6 +118,8 @@ def graphql_view(request: HttpRequest):
         del result["data"]
 
     response = JsonResponse(result, status=status_code)
+
+    print("#"*5, "response", result)
 
     for n, v in code_smell.storage.items():
         response.set_cookie(n, v)
