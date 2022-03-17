@@ -17,8 +17,7 @@ contract RentalAgreement {
     uint256 rentEndTime_;
     uint256 currentProfit_ = 0;
     uint256 currentBillingPeriod_ = 0;
-
-    bool withdrewInCurrentPeriod_ = false;
+    uint256 totalLandlordWithdrawals_ = 0;
 
     address payable landLord_;
     address payable tenant_;
@@ -118,7 +117,6 @@ contract RentalAgreement {
             else {
                 currentProfit_ = 0;
                 currentBillingPeriod_ = newBillingPeriod;
-                withdrewInCurrentPeriod_ = false;
             }
         }
 
@@ -145,28 +143,32 @@ contract RentalAgreement {
     }
 
     function getTenantProfit () view public returns (uint256) {
-        if (currentProfit_ < rentalRate_) return 0;
-        return currentProfit_ - rentalRate_;
+        uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
+        if (newBillingPeriod >= billingsCount_) newBillingPeriod = billingsCount_ - 1;
+
+        if (newBillingPeriod == billingsCount_ - 1 || currentBillingPeriod_ < newBillingPeriod) return address(this).balance - getLandlordProfit();
+        if (currentProfit_ < rentalRate_) return address(this).balance - getLandlordProfit() - currentProfit_;
+        return address(this).balance - getLandlordProfit() - rentalRate_;
     }
 
     function withdrawTenantProfit () public {
         uint256 profit = getTenantProfit();
         if (profit > 0) tenant_.transfer(profit);
-        currentProfit_ -= profit;
     }
 
     function getLandlordProfit () view public returns (uint256)  {
-        if (withdrewInCurrentPeriod_) return 0;
-        if (currentBillingPeriod_ == 0) return rentalRate_;
-        if (currentProfit_ > rentalRate_) return rentalRate_;
-        return currentProfit_;
+        uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
+        if (newBillingPeriod >= billingsCount_) newBillingPeriod = billingsCount_ - 1;
+
+        if (currentBillingPeriod_ == newBillingPeriod || (newBillingPeriod - currentBillingPeriod_ == 1 && currentProfit_ >= rentalRate_)) return (newBillingPeriod + 1) * rentalRate_ - totalLandlordWithdrawals_;
+        return (currentBillingPeriod_ + 1) * rentalRate_ + currentProfit_ - totalLandlordWithdrawals_;
+
     }
 
     function withdrawLandlordProfit () public {
         uint256 profit = getLandlordProfit();
         if (profit > 0) landLord_.transfer(profit);
-        if (currentBillingPeriod_ != 0) currentProfit_ -= rentalRate_;
-        withdrewInCurrentPeriod_ = true;
+        totalLandlordWithdrawals_ += profit;
     }
 
     function endAgreement () public {
