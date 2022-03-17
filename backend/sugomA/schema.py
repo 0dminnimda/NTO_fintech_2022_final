@@ -120,15 +120,6 @@ def resolve_request_authentication(_, info, address):
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
-    # sig = eth_keys.KeyAPI.Signature(signature_bytes=(eth_keys.KeyAPI.PublicKey.from_compressed_bytes(chr(0x02).encode("utf-8")) + chr(0x02)).to_bytes())
-    # signature = eth_keys.KeyAPI.Signature(vrs=(
-    #     int(signedMessage["v"], 16),
-    #     int(signedMessage["r"], 16),
-    #     int(signedMessage["s"], 16)))
-    # public_key = signature.recover_public_key_from_msg(code_smell.auth_message)
-    # print(public_key, address)
-    # (int(signedMessage["v"], 16), int(signedMessage["r"], 16), int(signedMessage["s"], 16)))
-
     recovered_address = Account.recover_message(
         encode_defunct(text=code_smell.auth_message),
         vrs=[int(i, 16) for i in signedMessage.values()])
