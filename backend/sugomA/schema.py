@@ -152,7 +152,7 @@ def resolve_request_authentication(_, info, address):
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
     try:
-        recovered_address = Account.recover_message(
+        recovered = Account.recover_message(
             encode_defunct(text=code_smell["auth_message"]),
             vrs=[int(i, 16) for i in signedMessage.values()])
     except (BadSignature, ValidationError) as e:
@@ -176,6 +176,15 @@ def resolve_authenticate(_, info, address, signedMessage):
     print("isLandlord", address, isLandlord)
     return Authentication.objects.create(
         address=address, isLandlord=(address == isLandlord))
+
+
+@mutation.field("createRoom")
+def resolve_create_room(_, info, room):
+    if room["area"] <= 0:
+        raise InvalidRoomParams
+
+    return Room.objects.create(internalName=room["internalName"],
+                               area=room["area"], location=room["location"])
 
 
 # authentication = ObjectType("Authentication")
