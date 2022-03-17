@@ -183,10 +183,7 @@ contract RentalAgreement {
         else {
             uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
             if (currentBillingPeriod_ == newBillingPeriod || (newBillingPeriod - currentBillingPeriod_ == 1 && currentProfit_ >= rentalRate_)) revert("The contract is being in not allowed state");
-            else {
-                withdrawLandlordProfit();
-                selfdestruct(tenant_);
-            }
+            else selfdestruct(landLord_);
         }
     }
 
