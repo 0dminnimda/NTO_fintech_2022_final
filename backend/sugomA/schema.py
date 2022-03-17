@@ -186,14 +186,19 @@ def resolve_authenticate(_, info, address, signedMessage):
 
 @mutation.field("createRoom")
 def resolve_create_room(_, info, room):
+    print("createRoom", room)
+
     if not code_smell["successfull_auth"]:
+        print("createRoom failure", room, code_smell["successfull_auth"], code_smell)  # noqa
         raise UnauthorizedAccess
 
     authentication = Authentication.objects.get(address=code_smell["address"])
     if not authentication.isLandlord:
+        print("createRoom failure", room, authentication.isLandlord, authentication)  # noqa
         raise NotLandlordAccess
 
     if room["area"] <= 0:
+        print("createRoom failure", room, room["area"])  # noqa
         raise InvalidRoomParams
 
     # each room have unique id, so no worries about multiple instances
