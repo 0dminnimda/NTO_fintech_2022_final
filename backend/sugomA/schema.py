@@ -1,6 +1,7 @@
 import os
 import secrets
 import time
+from dataclasses import _FIELDS, Field, dataclass
 
 import eth_keys
 from ariadne import (MutationType, ObjectType, QueryType, gql,
@@ -9,24 +10,24 @@ from ariadne import (MutationType, ObjectType, QueryType, gql,
 from sugomA.AmogusApp.models import Authentication
 
 
+@dataclass
 class Hack:
-    requested_auth: int
-    auth_key: bytes
-    successfull_auth: bool
-    address: str
-
-    def __init__(self):
-        self.reset()
+    requested_auth: int = 0
+    auth_message: str = "<invalid>"
+    successfull_auth: bool = False
+    address: str = "<invalid>"
 
     def reset(self):
-        self.requested_auth = 0
-        self.auth_key = b"<invalid>"
-        self.successfull_auth = False
-        self.address = "<invalid>"
+        for name in getattr(self, _FIELDS).keys():
+            self.reset_attr(name)
 
-    def __str__(self):
-        args = [self.requested_auth, self.auth_key, self.successfull_auth, self.address]
-        return type(self).__name__ + "(" + ", ".join(map(str, args)) + ")"
+    def reset_attr(self, attr: str) -> None:
+        field: Field = getattr(self, _FIELDS)[attr]
+        setattr(self, field.name, field.default)
+
+    # storage: dict
+    # def __getattr__(self, name: str):
+    #     self.storage
 
 
 code_smell = Hack()
