@@ -103,7 +103,7 @@ def graphql_view(request: HttpRequest):
     except HttpBadRequestError as error:
         return HttpResponseBadRequest(error.message)
 
-    print("#"*5, "request", data)
+    print("\n" + "#"*5, "request", data)
 
     code_smell.storage = request.COOKIES
 
