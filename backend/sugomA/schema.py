@@ -159,15 +159,15 @@ def resolve_request_authentication(_, info, address):
 def resolve_authenticate(_, info, address, signedMessage):
     try:
         recovered = Account.recover_message(
-            encode_defunct(text=code_smell["auth_message"]),
+            encode_defunct(text=code_smell["auth_message"]),  # type: ignore
             vrs=[int(i, 16) for i in signedMessage.values()])
     except (BadSignature, ValidationError) as e:
-        print("faulture", e, address, signedMessage, code_smell)
+        print("authenticate failure", e, address, signedMessage, code_smell)
         raise AuthenticationFailed
 
     print("authenticate", address, recovered, signedMessage, code_smell)
     if recovered != address or code_smell["requested_auth"] != 1:
-        print("faulture", recovered, address, code_smell["requested_auth"])
+        print("authenticate failure", recovered, address, code_smell["requested_auth"])  # noqa
         code_smell.reset()
         raise AuthenticationFailed
 
