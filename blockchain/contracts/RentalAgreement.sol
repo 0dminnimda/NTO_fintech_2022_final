@@ -180,14 +180,14 @@ contract RentalAgreement {
             withdrawLandlordProfit();
             selfdestruct(tenant_);
         }
-
-        uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
-        if (!(currentBillingPeriod_ == newBillingPeriod || (newBillingPeriod - currentBillingPeriod_ == 1 && currentProfit_ >= rentalRate_))) {
-            withdrawLandlordProfit();
-            selfdestruct(tenant_);
+        else {
+            uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
+            if (!(currentBillingPeriod_ == newBillingPeriod || (newBillingPeriod - currentBillingPeriod_ == 1 && currentProfit_ >= rentalRate_))) {
+                withdrawLandlordProfit();
+                selfdestruct(tenant_);
+            }
+            else revert("The contract is being in not allowed state");
         }
-
-        revert("The contract is being in not allowed state");
     }
 
     function endAgreementManually (uint256 deadline, Sign calldata landlordSign, Sign calldata tenantSign) public {
