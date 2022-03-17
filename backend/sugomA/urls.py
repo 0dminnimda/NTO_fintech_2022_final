@@ -9,6 +9,7 @@ from ariadne.graphql import graphql_sync
 from django.conf import settings
 from django.contrib import admin
 from django.http import HttpRequest, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import render
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from graphql import GraphQLSchema
@@ -94,6 +95,9 @@ def get_kwargs_graphql(request: HttpRequest) -> dict:
 
 @csrf_exempt
 def graphql_view(request: HttpRequest):
+    if request.method == "GET":
+        return render(request, "home.html")
+
     try:
         data = extract_data_from_request(request)
     except HttpBadRequestError as error:
