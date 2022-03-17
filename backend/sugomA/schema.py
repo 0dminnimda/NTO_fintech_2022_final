@@ -11,7 +11,8 @@ from eth_keys.exceptions import BadSignature, ValidationError
 
 from sugomA.AmogusApp.models import Authentication, Room
 
-from .exceptions import AuthenticationFailed, InvalidRoomParams, UnauthorizedAccess, NotLandlordAccess
+from .exceptions import (AuthenticationFailed, InvalidRoomParams,
+                         NotLandlordAccess, UnauthorizedAccess)
 
 
 class Hack:
