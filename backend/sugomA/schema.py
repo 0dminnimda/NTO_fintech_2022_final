@@ -120,6 +120,7 @@ mutation = MutationType()
 
 @mutation.field("requestAuthentication")
 def resolve_request_authentication(_, info, address):
+    code_smell.reset()
     code_smell["requested_auth"] = 2
 
     message = str(time.time()) + "_" + secrets.token_urlsafe(30)
@@ -142,6 +143,7 @@ def resolve_authenticate(_, info, address, signedMessage):
         vrs=[int(i, 16) for i in signedMessage.values()])
 
     if recovered_address != address or code_smell["requested_auth"] != 1:
+        code_smell.reset()
         raise Exception("A")
 
     code_smell["successfull_auth"] = True
