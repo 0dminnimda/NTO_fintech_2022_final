@@ -41,6 +41,8 @@ def track(view):
             if "data" in data and "errors" in data:
                 del data["data"]
             response = JsonResponse(data)  # json.dumps(data)
+        else:
+            code_smell.reset()
 
         return response
 
