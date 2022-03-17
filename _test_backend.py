@@ -7,7 +7,7 @@ from eth_account import Account
 from eth_account.messages import encode_defunct
 
 
-print("#"*70 + os.argv[0])
+# print("#"*70 + os.argv[0])
 
 
 root = "http://127.0.0.1:6969/"
@@ -24,48 +24,71 @@ def test_check():
     print(session.post(check))
 
 
+def poster(session, data):
+    resp = session.post(graphql, json={"query": data})
+    return resp.json(), resp.text
+
+
+def asserter(data, need, res, text=None):
+    assert res == need, f"{data!r}\n -> {res!r}\n != {need!r}"
+
+    if text is None:
+        text = res
+    print(f"{data!r} -> {text!r}")
+
+
 def test2():
     isLandlord = False
     session = requests.Session()
 
     data = 'query{authentication{address,isLandlord}}'
     need = '{"data": {"authentication": null}}'
-    text = session.post(graphql, json={"query": data}).text
-    assert text == need, f"{data!r} -> {text!r} != {need!r}"
-    print(f"{data!r} -> {text!r}")
+    son, text = poster(session, data)
+    asserter(data, need, text)
+
+    data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'
+    need = '{"errors": [{"message": "Authentication required"}]}'
+    son, text = poster(session, data)
+    asserter(data, need, text)
 
     private_key = "0x" + secrets.token_hex(32)
     acc = Account.from_key(private_key)
-
-    data = 'mutation {message: requestAuthentication(address: "' + acc.address + '")}'
-    son = session.post(graphql, json={"query": data}).json()
+    data = 'mutation {message: requestAuthentication(address: "' + acc.address + '")}'  # noqa
+    son, text = poster(session, data)
     message = son["data"]["message"]
-
-    sig = Account.sign_message(encode_defunct(text=message), private_key)
-    vrs = list(map(hex, (sig.v, sig.r, sig.s)))
 
     if isLandlord:
         os.environ["LANDLORD_ADDRESS"] = acc.address
 
-    data = 'mutation {authentication: authenticate(address: "' + acc.address + '" signedMessage: {v: "' + vrs[0] + '" r: "' + vrs[1] + '" s: "' + vrs[2] + '"}) {address isLandlord}}'
-    need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": ' + json.dumps(isLandlord) + '}}}'
-    text = session.post(graphql, json={"query": data}).text
-    assert text == need, f"{data!r} -> {text!r} != {need!r}"
-    # print(f"{data!r} -> {text!r}")
+    sig = Account.sign_message(encode_defunct(text=message), private_key)
+    vrs = list(map(hex, (sig.v, sig.r, sig.s)))
+    data = 'mutation {authentication: authenticate(address: "' + acc.address + '" signedMessage: {v: "' + vrs[0] + '" r: "' + vrs[1] + '" s: "' + vrs[2] + '"}) {address isLandlord}}'  # noqa
+    need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": ' + json.dumps(isLandlord) + '}}}'  # noqa
+    son, text = poster(session, data)
+    asserter(data, need, text)
 
     data = 'query{authentication{address,isLandlord}}'
     need = need
-    text = session.post(graphql, json={"query": data}).text
-    assert text == need, f"{data!r} -> {text!r} != {need!r}"
-    # print(f"{data!r} -> {text!r}")
+    son, text = poster(session, data)
+    asserter(data, need, text)
 
-    data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'
-    need = {"data": {"createRoom": {"id": "<room-id>", "internalName": "some-name", "area": 100.5, "location": "some location"}}}
-    resp = session.post(graphql, json={"query": data})
-    son, text = resp.json(), resp.text
+    data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
+    need = {"data": {"createRoom": {"internalName": "some-name", "area": 100.5, "location": "some location"}}}  # noqa
+    son, text = poster(session, data)
     room_id = son["data"]["createRoom"].pop("id")
-    assert son == need, f"{data!r} -> {son!r} != {need!r}"
-    print(f"{data!r} -> {text!r}")
+    asserter(data, need, son, text)
+
+    data = 'mutation {createRoom(room: {internalName: "some-name", area: -1, location: "some location"}) {id, internalName, area, location}}'  # noqa
+    need = '{"errors": [{"message": "The room area must be greater than zero"}]}'  # noqa
+    son, text = poster(session, data)
+    asserter(data, need, text)
+
+    data = 'mutation {createRoom(room: {internalName: "some-name", area: 0, location: "some location"}) {id, internalName, area, location}}'  # noqa
+    need = need
+    son, text = poster(session, data)
+    asserter(data, need, text)
+
+    # need = '{"data": null,"errors": [{ "message": "This method is available only for the landlord" }]}'  # noqa
 
 
 test_check()
