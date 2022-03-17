@@ -127,6 +127,11 @@ def resolve_authentication(_, info):
     return Authentication.objects.get(address=code_smell["address"])
 
 
+@query.field("room")
+def resolve_room(_, info, id):
+    return Room.objects.get(id=id)
+
+
 mutation = MutationType()
 
 
@@ -190,6 +195,7 @@ def resolve_create_room(_, info, room):
     if room["area"] <= 0:
         raise InvalidRoomParams
 
+    # each room have unique id, so no worries about multiple instances
     return Room.objects.create(internalName=room["internalName"],
                                area=room["area"], location=room["location"])
 
