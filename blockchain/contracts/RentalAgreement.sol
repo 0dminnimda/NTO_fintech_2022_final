@@ -18,12 +18,15 @@ contract RentalAgreement {
     uint256 currentProfit_ = 0;
     uint256 currentBillingPeriod_ = 0;
 
+    bool withdrewInCurrentPeriod_ = false;
+
     address landLord_;
     address tenant_;
 
     bytes32 private DOMAIN_SEPARATOR;
     bytes32 private constant PERMIT_TYPEHASH = keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)");
     bytes32 private constant TICKET_TYPEHASH = keccak256("Ticket(uint256 deadline,uint256 nonce,uint256 value)");
+    bytes32 private constant END_TYPEHASH = keccak256("EndConsent(uint256 deadline)");
 
     address[] private cashiers;
     mapping(address => uint256) private cashierNonce;
@@ -140,28 +143,56 @@ contract RentalAgreement {
         emit PurchasePayment(value);
     }
 
-    function getTenantProfit () view public returns (uint256) {
-
-    }
+    function getTenantProfit () view public returns (uint256) { return currentProfit_ - rentalRate_; }
 
     function withdrawTenantProfit () public {
-
+        uint256 profit = getTenantProfit();
+        if (profit) {
+            (bool sent, bytes memory data) = tenant_.call{value: profit}("");
+            require(sent, "Failed to send Ether");
+        }
     }
 
     function getLandlordProfit () view public returns (uint256)  {
-
+        if (withdrewInCurrentPeriod_) return 0;
+        if (currentProfit_ > rentalRate_) return rentalRate_;
+        return currentProfit_;
     }
 
     function withdrawLandlordProfit () public {
-
+        uint256 profit = getLandlordProfit();
+        if (profit) {
+            (bool sent, bytes memory data) = landLord_.call{value: profit}("");
+            require(sent, "Failed to send Ether");
+        }
     }
 
     function endAgreement () public {
-
+        selfdestruct(landLord_);
     }
 
     function endAgreementManually (uint256 deadline, Sign calldata landlordSign, Sign calldata tenantSign) public {
+        if (tenant_ == address(0)) revert("The contract is being in not allowed state");
+        if (deadline < block.timestamp) revert("The operation is outdated");
 
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            keccak256(abi.encode(END_TYPEHASH, deadline))
+        ));
+        address landlord = ecrecover(digest, landlordSign.v, landlordSign.r, landlordSign.s);
+        if (landlord != landLord_) revert("Invalid landlord sign");
+
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            keccak256(abi.encode(END_TYPEHASH, deadline))
+        ));
+        address tenant = ecrecover(digest, tenantSign.v, tenantSign.r, tenantSign.s);
+        if (tenant != tenant_) revert("Invalid tenant sign");
+
+        withdrawTenantProfit();
+        selfdestruct(landLord_);
     }
 
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }
