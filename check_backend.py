@@ -79,6 +79,8 @@ def test2():
     son, text = poster(session, data)
     asserter(data, need, text)
 
+    # need = '{"data": null,"errors": [{ "message": "This method is available only for the landlord" }]}'  # noqa
+
     data = 'mutation {createRoom(room: {internalName: "some-name", area: -1, location: "some location"}) {id, internalName, area, location}}'  # noqa
     need = '{"errors": [{"message": "The room area must be greater than zero"}]}'  # noqa
     son, text = poster(session, data)
@@ -89,7 +91,16 @@ def test2():
     son, text = poster(session, data)
     asserter(data, need, text)
 
-    # need = '{"data": null,"errors": [{ "message": "This method is available only for the landlord" }]}'  # noqa
+    contract_address = "0x" + secrets.token_hex(32)
+    data = 'mutation {setRoomContractAddress(id: "' + room_id + '", contractAddress: "' + contract_address + '") {id, contractAddress}}'  # noqa
+    need = '{"data": {"setRoomContractAddress": {"id": "' + room_id + '", "contractAddress": "' + contract_address + '"}}}'  # noqa
+    son, text = poster(session, data)
+    asserter(data, need, text)
+
+    data = 'query {room(id: "' + room_id + '") {id, contractAddress}}'
+    need = '{"data": {"room": {"id": "' + room_id + '", "contractAddress": "' + contract_address + '"}}}'  # noqa
+    son, text = poster(session, data)
+    asserter(data, need, text)
 
 
 test_check()
