@@ -115,7 +115,7 @@ contract RentalAgreement {
         if (rentEndTime_ <= block.timestamp) revert("The contract is being in not allowed state");
         uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
         if (currentBillingPeriod_ != newBillingPeriod) {
-            if (currentProfit_ < rentalRate_ || newBillingPeriod - currentBillingPeriod_ > 1) revert("The contract is being in not allowed state");
+            if (getLandlordProfit() < rentalRate_ || newBillingPeriod - currentBillingPeriod_ > 1) revert("The contract is being in not allowed state");
             else {
                 currentProfit_ = 0;
                 currentBillingPeriod_ = newBillingPeriod;
