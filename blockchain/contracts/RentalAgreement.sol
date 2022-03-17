@@ -150,10 +150,7 @@ contract RentalAgreement {
 
     function withdrawTenantProfit () public {
         uint256 profit = getTenantProfit();
-        if (profit > 0) {
-            (bool sent, bytes memory data) = tenant_.call{value: profit}("");
-            require(sent, "Failed to send Ether");
-        }
+        if (profit > 0) tenant_.transfer(profit);
     }
 
     function getLandlordProfit () view public returns (uint256)  {
@@ -164,10 +161,7 @@ contract RentalAgreement {
 
     function withdrawLandlordProfit () public {
         uint256 profit = getLandlordProfit();
-        if (profit > 0) {
-            (bool sent, bytes memory data) = landLord_.call{value: profit}("");
-            require(sent, "Failed to send Ether");
-        }
+        if (profit > 0) landLord_.transfer(profit);
     }
 
     function endAgreement () public {
