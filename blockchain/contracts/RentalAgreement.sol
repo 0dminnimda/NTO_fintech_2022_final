@@ -165,7 +165,7 @@ contract RentalAgreement {
     function withdrawLandlordProfit () public {
         uint256 profit = getLandlordProfit();
         if (profit > 0) landLord_.transfer(profit);
-        currentProfit_ -= rentalRate_;
+        if (currentBillingPeriod_ != 0) currentProfit_ -= rentalRate_;
         withdrewInCurrentPeriod_ = true;
     }
 
