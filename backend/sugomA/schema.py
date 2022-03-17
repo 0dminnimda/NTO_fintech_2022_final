@@ -38,10 +38,14 @@ class Hack:
         result = self.storage.get(name, default)
         if result is default:
             return self.reset_attr(name)
-        return json.loads(result)
+        if type(self.attrs[name]) is not str:
+            return json.loads(result)
+        return result
 
     def __setitem__(self, name, value):
-        self.storage[name] = json.dumps(value)
+        if type(self.attrs[name]) is not str:
+            value = json.dumps(value)
+        self.storage[name] = value
 
     def __str__(self):
         args = [f"{name}={self[name]}" for name in self.attrs.keys()]
