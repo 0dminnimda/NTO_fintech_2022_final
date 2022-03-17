@@ -6,10 +6,6 @@ import requests
 from eth_account import Account
 from eth_account.messages import encode_defunct
 
-
-# print("#"*70 + os.argv[0])
-
-
 root = "http://127.0.0.1:6969/"
 check = root + "check"
 graphql = root + "graphql"
