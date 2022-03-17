@@ -142,12 +142,18 @@ contract RentalAgreement {
         emit PurchasePayment(value);
     }
 
-    function getTenantProfit () view public returns (uint256) { return address(this).balance - getLandlordProfit(); }
+    function getTenantProfit () view public returns (uint256) {
+        uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
+        if (newBillingPeriod >= billingsCount_) newBillingPeriod = billingsCount_ - 1;
+
+        if (newBillingPeriod == billingsCount_ - 1 || currentBillingPeriod_ < newBillingPeriod) return address(this).balance - getLandlordProfit();
+        if (currentProfit_ < rentalRate_) return address(this).balance - getLandlordProfit() - currentProfit_;
+        return address(this).balance - getLandlordProfit() - rentalRate_;
+    }
 
     function withdrawTenantProfit () public {
         uint256 profit = getTenantProfit();
         if (profit > 0) tenant_.transfer(profit);
-        currentProfit_ -= profit;
     }
 
     function getLandlordProfit () view public returns (uint256)  {
