@@ -207,6 +207,17 @@ def resolve_create_room(_, info, room):
                                area=room["area"], location=room["location"])
 
 
+@mutation.field("setRoomContractAddress")
+def resolve_set_room_contract_address(_, info, id, contractAddress):
+    print("setRoomContractAddress", id, contractAddress)
+
+    room = Room.objects.get(id=id)
+    room.contractAddress = contractAddress
+    room.save()
+
+    return room
+
+
 schema = make_executable_schema(
     gql(type_defs), query, mutation,
     # authentication
