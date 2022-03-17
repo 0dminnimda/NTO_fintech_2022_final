@@ -18,3 +18,6 @@ class Room(models.Model):
     internalName = models.TextField("internalName", default="")
     area = models.FloatField("area")
     location = models.TextField("location", default="")
+
+    contractAddress = models.TextField("contractAddress", null=True)
+    publicName = models.TextField("publicName", null=True)
