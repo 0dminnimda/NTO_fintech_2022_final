@@ -31,6 +31,10 @@ from .schema import schema, code_smell
 
 def track(view):
     def wrapper(*args, **kwargs):
+        request, *_ = args
+        # if request.method == "POST":
+        code_smell.storage = request.session
+
         response = view(*args, **kwargs)
 
         if code_smell["requested_auth"] > 0:
@@ -41,8 +45,6 @@ def track(view):
             if "data" in data and "errors" in data:
                 del data["data"]
             response = JsonResponse(data)  # json.dumps(data)
-        else:
-            code_smell.reset()
 
         return response
 

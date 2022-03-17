@@ -44,7 +44,7 @@ class Hack:
 
     def __str__(self):
         args = [f"{name}={self[name]}" for name in self.attrs.keys()]
-        return type(self).__name__ + "(" + ", ".join(args) + ")"
+        return f"{type(self).__name__}({self.storage}, {{{', '.join(args)}}})"
 
 
 code_smell = Hack({})
