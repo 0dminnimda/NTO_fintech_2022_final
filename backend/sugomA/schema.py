@@ -20,11 +20,6 @@ class Hack:
         "address": "<invalid>",
     }
 
-    # requested_auth: int = 0
-    # auth_message: str = "<invalid>"
-    # successfull_auth: bool = False
-    # address: str = "<invalid>"
-
     def __init__(self, storage):
         self.storage = storage
         self.reset()
@@ -50,21 +45,6 @@ class Hack:
     def __str__(self):
         args = [f"{name}={self[name]}" for name in self.attrs.keys()]
         return type(self).__name__ + "(" + ", ".join(args) + ")"
-
-    # def __getattribute__(self, name: str, default=object()):
-    #     if name not in super().__getattribute__(_FIELDS):
-    #         return super().__getattribute__(name)
-
-        # result = super().__getattribute__("storage").get(name, default)
-        # if result is default:
-        #     return super().__getattribute__("reset_attr")(name)
-        # return result
-
-    # def __setattr__(self, name: str, value):
-    #     if name in super().__getattribute__(_FIELDS) and name != "storage":
-    #         super().__getattribute__("storage")[name] = value
-    #     else:
-    #         super().__setattr__(name, value)
 
 
 code_smell = Hack({})
