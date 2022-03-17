@@ -118,6 +118,7 @@ contract RentalAgreement {
             else {
                 currentProfit_ = 0;
                 currentBillingPeriod_ = newBillingPeriod;
+                withdrewInCurrentPeriod_ = true;
             }
         }
 
@@ -151,6 +152,7 @@ contract RentalAgreement {
     function withdrawTenantProfit () public {
         uint256 profit = getTenantProfit();
         if (profit > 0) tenant_.transfer(profit);
+        currentProfit_ -= profit;
     }
 
     function getLandlordProfit () view public returns (uint256)  {
@@ -162,6 +164,8 @@ contract RentalAgreement {
     function withdrawLandlordProfit () public {
         uint256 profit = getLandlordProfit();
         if (profit > 0) landLord_.transfer(profit);
+        currentProfit_ -= rentalRate_;
+        withdrewInCurrentPeriod_ = true;
     }
 
     function endAgreement () public {
