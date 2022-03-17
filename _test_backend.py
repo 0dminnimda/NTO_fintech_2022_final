@@ -1,9 +1,14 @@
+import json
 import os
 import secrets
 
 import requests
 from eth_account import Account
 from eth_account.messages import encode_defunct
+
+
+print("#"*70 + os.argv[0])
+
 
 root = "http://127.0.0.1:6969/"
 check = root + "check"
@@ -19,13 +24,15 @@ def test_check():
     print(session.post(check))
 
 
-def test2(isLandlord):
+def test2():
+    isLandlord = False
     session = requests.Session()
 
     data = 'query{authentication{address,isLandlord}}'
     need = '{"data": {"authentication": null}}'
     text = session.post(graphql, json={"query": data}).text
     assert text == need, f"{data!r} -> {text!r} != {need!r}"
+    print(f"{data!r} -> {text!r}")
 
     private_key = "0x" + secrets.token_hex(32)
     acc = Account.from_key(private_key)
@@ -37,34 +44,34 @@ def test2(isLandlord):
     sig = Account.sign_message(encode_defunct(text=message), private_key)
     vrs = list(map(hex, (sig.v, sig.r, sig.s)))
 
+    if isLandlord:
+        os.environ["LANDLORD_ADDRESS"] = acc.address
+
     data = 'mutation {authentication: authenticate(address: "' + acc.address + '" signedMessage: {v: "' + vrs[0] + '" r: "' + vrs[1] + '" s: "' + vrs[2] + '"}) {address isLandlord}}'
-    need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": ' + isLandlord + '}}}'
+    need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": ' + json.dumps(isLandlord) + '}}}'
     text = session.post(graphql, json={"query": data}).text
     assert text == need, f"{data!r} -> {text!r} != {need!r}"
+    # print(f"{data!r} -> {text!r}")
 
     data = 'query{authentication{address,isLandlord}}'
-    need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": ' + isLandlord + '}}}'
+    need = need
     text = session.post(graphql, json={"query": data}).text
     assert text == need, f"{data!r} -> {text!r} != {need!r}"
+    # print(f"{data!r} -> {text!r}")
+
+    data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'
+    need = {"data": {"createRoom": {"id": "<room-id>", "internalName": "some-name", "area": 100.5, "location": "some location"}}}
+    resp = session.post(graphql, json={"query": data})
+    son, text = resp.json(), resp.text
+    room_id = son["data"]["createRoom"].pop("id")
+    assert son == need, f"{data!r} -> {son!r} != {need!r}"
+    print(f"{data!r} -> {text!r}")
 
 
 test_check()
 
 
-print(1)
-test2("false")
-
-
-os.environ["LANDLORD_ADDRESS"] = "false"
-
-print(2)
-test2("false")
-
-
-os.environ["LANDLORD_ADDRESS"] = "true"
-
-print(3)
-test2("false")
+test2()
 
 
 # t1 = "0x" + secrets.token_hex(5)
