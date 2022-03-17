@@ -117,7 +117,10 @@ query = QueryType()
 
 @query.field("authentication")
 def resolve_authentication(_, info):
-    print("authentication", code_smell["successfull_auth"], Authentication.objects.filter(address=code_smell["address"]), code_smell)
+    print("authentication", code_smell["successfull_auth"],
+          Authentication.objects.filter(address=code_smell["address"]),
+          code_smell)
+
     if not code_smell["successfull_auth"]:
         return None
 
@@ -156,9 +159,9 @@ def resolve_authenticate(_, info, address, signedMessage):
         print("faulture", e, address, signedMessage, code_smell)
         raise AuthenticationFailed
 
-    print("authenticate", address, recovered_address, signedMessage, code_smell)
-    if recovered_address != address or code_smell["requested_auth"] != 1:
-        print("faulture", recovered_address, address, code_smell["requested_auth"])
+    print("authenticate", address, recovered, signedMessage, code_smell)
+    if recovered != address or code_smell["requested_auth"] != 1:
+        print("faulture", recovered, address, code_smell["requested_auth"])
         code_smell.reset()
         raise AuthenticationFailed
 
@@ -169,7 +172,7 @@ def resolve_authenticate(_, info, address, signedMessage):
     if len(authentications) != 0:  # should be 1
         return authentications[0]
 
-    isLandlord = os.environ.get("LANDLORD_ADDRESS", "")
+    isLandlord = os.environ.get("LANDLORD_ADDRESS", "<none>")
     print("isLandlord", address, isLandlord)
     return Authentication.objects.create(
         address=address, isLandlord=(address == isLandlord))
