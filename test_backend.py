@@ -1,3 +1,4 @@
+import os
 import secrets
 
 import requests
@@ -9,36 +10,62 @@ check = root + "check"
 graphql = root + "graphql"
 
 
-session = requests.Session()
+def test_check():
+    session = requests.Session()
 
-print(session.post(check))
-print(session.post(check))
-print(session.post(check))
-print(session.post(check))
+    print(session.post(check))
+    print(session.post(check))
+    print(session.post(check))
+    print(session.post(check))
 
-# quit()
 
-data = 'query{authentication{address,isLandlord}}'
-need = '{"data": {"authentication": null}}'
-text = session.post(graphql, json={"query": data}).text
-assert text == need, f"{data!r} -> {text!r} != {need!r}"
+def test2(isLandlord):
+    session = requests.Session()
 
-private_key = "0x" + secrets.token_hex(32)
-acc = Account.from_key(private_key)
+    data = 'query{authentication{address,isLandlord}}'
+    need = '{"data": {"authentication": null}}'
+    text = session.post(graphql, json={"query": data}).text
+    assert text == need, f"{data!r} -> {text!r} != {need!r}"
 
-# print(f"{private_key=}, {acc.address=}, {vrs=}")
+    private_key = "0x" + secrets.token_hex(32)
+    acc = Account.from_key(private_key)
 
-data = 'mutation {message: requestAuthentication(address: "' + acc.address + '")}'
-son = session.post(graphql, json={"query": data}).json()
-message = son["data"]["message"]
+    data = 'mutation {message: requestAuthentication(address: "' + acc.address + '")}'
+    son = session.post(graphql, json={"query": data}).json()
+    message = son["data"]["message"]
 
-sig = Account.sign_message(encode_defunct(text=message), private_key)
-vrs = list(map(hex, (sig.v, sig.r, sig.s)))
+    sig = Account.sign_message(encode_defunct(text=message), private_key)
+    vrs = list(map(hex, (sig.v, sig.r, sig.s)))
 
-data = 'mutation {authentication: authenticate(address: "' + acc.address + '" signedMessage: {v: "' + vrs[0] + '" r: "' + vrs[1] + '" s: "' + vrs[2] + '"}) {address isLandlord}}'
-need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": false}}}'
-text = session.post(graphql, json={"query": data}).text
-assert text == need, f"{data!r} -> {text!r} != {need!r}"
+    data = 'mutation {authentication: authenticate(address: "' + acc.address + '" signedMessage: {v: "' + vrs[0] + '" r: "' + vrs[1] + '" s: "' + vrs[2] + '"}) {address isLandlord}}'
+    need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": ' + isLandlord + '}}}'
+    text = session.post(graphql, json={"query": data}).text
+    assert text == need, f"{data!r} -> {text!r} != {need!r}"
+
+    data = 'query{authentication{address,isLandlord}}'
+    need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": ' + isLandlord + '}}}'
+    text = session.post(graphql, json={"query": data}).text
+    assert text == need, f"{data!r} -> {text!r} != {need!r}"
+
+
+test_check()
+
+
+print(1)
+test2("false")
+
+
+os.environ["LANDLORD_ADDRESS"] = "false"
+
+print(2)
+test2("false")
+
+
+os.environ["LANDLORD_ADDRESS"] = "true"
+
+print(3)
+test2("false")
+
 
 # t1 = "0x" + secrets.token_hex(5)
 # pairs = [
