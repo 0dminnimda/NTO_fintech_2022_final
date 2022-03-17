@@ -77,7 +77,6 @@ contract RentalAgreement {
         billingsCount_ = billingsCount;
         rentStartTime_ = block.timestamp;
         rentEndTime_ = rentStartTime_ + billingPeriodDuration * billingsCount;
-        currentProfit_ = rentalRate_;
     }
 
     function addCashier (address addr) public {
@@ -115,7 +114,7 @@ contract RentalAgreement {
         if (rentEndTime_ <= block.timestamp) revert("The contract is being in not allowed state");
         uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
         if (currentBillingPeriod_ != newBillingPeriod) {
-            if (getLandlordProfit() < rentalRate_ || newBillingPeriod - currentBillingPeriod_ > 1) revert("The contract is being in not allowed state");
+            if (currentProfit_ < rentalRate_ || newBillingPeriod - currentBillingPeriod_ > 1) revert("The contract is being in not allowed state");
             else {
                 currentProfit_ = 0;
                 currentBillingPeriod_ = newBillingPeriod;
@@ -158,6 +157,7 @@ contract RentalAgreement {
 
     function getLandlordProfit () view public returns (uint256)  {
         if (withdrewInCurrentPeriod_) return 0;
+        if (currentBillingPeriod_ == 0) return rentalRate_;
         if (currentProfit_ > rentalRate_) return rentalRate_;
         return currentProfit_;
     }
