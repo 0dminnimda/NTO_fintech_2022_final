@@ -1,3 +1,4 @@
+import json
 import os
 import secrets
 import time
@@ -37,10 +38,10 @@ class Hack:
         result = self.storage.get(name, default)
         if result is default:
             return self.reset_attr(name)
-        return result
+        return json.loads(result)
 
     def __setitem__(self, name, value):
-        self.storage[name] = value
+        self.storage[name] = json.dumps(value)
 
     def __str__(self):
         args = [f"{name}={self[name]}" for name in self.attrs.keys()]
