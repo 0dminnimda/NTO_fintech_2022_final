@@ -1,7 +1,6 @@
 import json
 from typing import cast
 
-from ariadne import format_error
 from ariadne.constants import DATA_TYPE_JSON, DATA_TYPE_MULTIPART
 from ariadne.exceptions import HttpBadRequestError
 from ariadne.file_uploads import combine_multipart_data
@@ -14,20 +13,9 @@ from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from graphql import GraphQLSchema
 
+from .exceptions import error_formatter
 from .AmogusApp.views import check, home
 from .schema import code_smell, schema
-
-mapping = {"A": {"message": "Authentication failed"}}
-
-
-def my_format_error(error, debug: bool = False) -> dict:
-    # formatted = error.formatted
-
-    result = mapping.get(error.message, None)
-    if result is not None:
-        return result
-
-    return format_error(error, debug)
 
 
 def extract_data_from_request(request: HttpRequest):
@@ -87,7 +75,7 @@ def get_kwargs_graphql(request: HttpRequest) -> dict:
         "debug": settings.DEBUG,
         "introspection": True,
         "logger": None,
-        "error_formatter": my_format_error,
+        "error_formatter": error_formatter,
         "extensions": extensions,
         "middleware": None,
     }
