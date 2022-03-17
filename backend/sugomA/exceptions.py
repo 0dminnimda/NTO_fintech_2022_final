@@ -10,6 +10,14 @@ class AuthenticationFailed(sugomAException):
     message = "Authentication failed"
 
 
+class UnauthorizedAccess(sugomAException):
+    message = "Authentication required"
+
+
+class NotLandlordAccess(sugomAException):
+    message = "This method is available only for the landlord"
+
+
 class InvalidRoomParams(sugomAException):
     message = "The room area must be greater than zero"
 
