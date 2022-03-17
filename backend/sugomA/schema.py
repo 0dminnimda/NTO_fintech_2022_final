@@ -145,9 +145,13 @@ def resolve_request_authentication(_, info, address):
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
-    recovered_address = Account.recover_message(
-        encode_defunct(text=code_smell["auth_message"]),
-        vrs=[int(i, 16) for i in signedMessage.values()])
+    try:
+        recovered_address = Account.recover_message(
+            encode_defunct(text=code_smell["auth_message"]),
+            vrs=[int(i, 16) for i in signedMessage.values()])
+    except (BadSignature, ValidationError) as e:
+        print("faulture", e, address, signedMessage, code_smell)
+        raise Exception("A")
 
     print("authenticate", address, recovered_address, signedMessage, code_smell)
     if recovered_address != address or code_smell["requested_auth"] != 1:
