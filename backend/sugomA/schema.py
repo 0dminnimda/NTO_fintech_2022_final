@@ -7,8 +7,11 @@ from ariadne import (MutationType, ObjectType, QueryType, gql,
                      make_executable_schema)
 from eth_account import Account
 from eth_account.messages import encode_defunct
+from eth_keys.exceptions import BadSignature, ValidationError
 
-from sugomA.AmogusApp.models import Authentication
+from sugomA.AmogusApp.models import Authentication, Room
+
+from .exceptions import AuthenticationFailed, InvalidRoomParams
 
 
 class Hack:
@@ -151,13 +154,13 @@ def resolve_authenticate(_, info, address, signedMessage):
             vrs=[int(i, 16) for i in signedMessage.values()])
     except (BadSignature, ValidationError) as e:
         print("faulture", e, address, signedMessage, code_smell)
-        raise Exception("A")
+        raise AuthenticationFailed
 
     print("authenticate", address, recovered_address, signedMessage, code_smell)
     if recovered_address != address or code_smell["requested_auth"] != 1:
         print("faulture", recovered_address, address, code_smell["requested_auth"])
         code_smell.reset()
-        raise Exception("A")
+        raise AuthenticationFailed
 
     code_smell["successfull_auth"] = True
     code_smell["address"] = address
