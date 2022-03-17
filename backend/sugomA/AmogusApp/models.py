@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 
@@ -12,6 +14,7 @@ class Authentication(models.Model):
 
 
 class Room(models.Model):
+    id = models.UUIDField("id", primary_key=True, default=uuid.uuid4, editable=False)
     internalName = models.TextField("internalName", default="")
     area = models.FloatField("area")
     location = models.TextField("location", default="")
