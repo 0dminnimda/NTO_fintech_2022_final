@@ -187,19 +187,6 @@ def resolve_create_room(_, info, room):
                                area=room["area"], location=room["location"])
 
 
-# authentication = ObjectType("Authentication")
-
-
-# @authentication.field("address")
-# def resolve_address(root, info):
-#     return root.address
-
-
-# @authentication.field("isLandlord")
-# def resolve_is_landlord(root, info):
-#     return root.isLandlord
-
-
 schema = make_executable_schema(
     gql(type_defs), query, mutation,
     # authentication
