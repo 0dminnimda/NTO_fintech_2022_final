@@ -113,6 +113,7 @@ query = QueryType()
 
 @query.field("authentication")
 def resolve_authentication(_, info):
+    print("resolve_request_authentication")
     if not code_smell["successfull_auth"]:
         return None
 
@@ -124,6 +125,7 @@ mutation = MutationType()
 
 @mutation.field("requestAuthentication")
 def resolve_request_authentication(_, info, address):
+    print("requestAuthentication", address)
     code_smell.reset()
     code_smell["requested_auth"] = 2
 
@@ -142,11 +144,13 @@ def resolve_request_authentication(_, info, address):
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
+    print("authenticate", address, signedMessage)
     recovered_address = Account.recover_message(
         encode_defunct(text=code_smell["auth_message"]),
         vrs=[int(i, 16) for i in signedMessage.values()])
 
     if recovered_address != address or code_smell["requested_auth"] != 1:
+        print(recovered_address, address, code_smell["requested_auth"])
         code_smell.reset()
         raise Exception("A")
 
@@ -157,7 +161,9 @@ def resolve_authenticate(_, info, address, signedMessage):
     if len(authentications) != 0:  # should be 1
         return authentications[0]
 
-    isLandlord = os.environ.get("LANDLORD_ADDRESS", "false")
+    isLandlord = os.environ.get("LANDLORD_ADDRESS", None)
+    print(isLandlord)
+    isLandlord = "false" if isLandlord is None else isLandlord
     return Authentication.objects.create(
         address=address, isLandlord=json.loads(isLandlord))
 
