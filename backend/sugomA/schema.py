@@ -267,8 +267,8 @@ def resolve_set_room_contract_address(_, info, id, contractAddress=None):
     require_landlord(Authentication.objects.get(address=code_smell["address"]))
     room = get_existing_room(id)
 
-    # RPC_URL = os.environ.get("RPC_URL", None)
-    # print("RPC_URL", RPC_URL)
+    RPC_URL = os.environ.get("RPC_URL", None)
+    print("RPC_URL", RPC_URL)
     # assert RPC_URL is not None
     # web3 = Web3(Web3.HTTPProvider(RPC_URL))
     check_contract_address(contractAddress)
