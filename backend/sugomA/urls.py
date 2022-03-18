@@ -112,9 +112,28 @@ def graphql_view(request: HttpRequest):
     return response
 
 
+@csrf_exempt
+def rooms_view(request: HttpRequest):
+    return render(request, "rooms.html")
+
+
+@csrf_exempt
+def rooms_create_view(request: HttpRequest):
+    return render(request, "rooms_create.html")
+
+
+@csrf_exempt
+def room_view(request: HttpRequest, room_id):
+    print('ROOM:', room_id)
+    return render(request, "room.html")
+
+
 urlpatterns = [
     path("", csrf_exempt(home)),
     path("admin/", admin.site.urls),
     path('graphql', graphql_view, name='graphql'),
+    path('rooms', rooms_view),
+    path('rooms/create', rooms_create_view),
+    path('room/<int:room_id>', room_view),
     path("check", csrf_exempt(check)),
 ]

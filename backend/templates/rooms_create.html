@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <script type="text/javascript">
+            async function send () {
+                let internalName = document.getElementsByClassName('room-form__internal-name')[0].value,
+                    area = document.getElementsByClassName('room-form__area')[0].value,
+                    location = document.getElementsByClassName('room-form__location')[0].value
+
+                console.log(internalName, area, location)
+
+                let response = await fetch("/graphql", {
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                    method: "POST",
+                    body: `{"query":"mutation {createRoom(room: {internalName: \\"` + internalName + `\\",area: ` + area + `,location: \\"` + location + `\\"}) {id, internalName, area, location}}","variables":null}`
+                })
+
+                window.location.href = "/room/" + (await response.json()).data.createRoom.id;
+            }
+
+            window.addEventListener('load', async function () {
+                document.getElementsByClassName('room-form__submit')[0].onclick = send
+            })
+        </script>
+        <title>create</title>
+    </head>
+    <body>
+        <form class="room-form" method="post" onsubmit="return false">
+            <input type="text" class="room-form__internal-name" value="" required>
+            <input type="number" class="room-form__area" value="" required>
+            <input type="text" class="room-form__location" value="" required>
+            <button type="submit" class="room-form__submit"></button>
+        </form>
+    </body>
+</html>
