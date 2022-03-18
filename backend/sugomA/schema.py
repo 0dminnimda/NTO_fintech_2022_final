@@ -1,9 +1,9 @@
 import json
 import os
 import secrets
-import time
 import uuid
 from copy import copy
+from time import time
 
 from ariadne import (MutationType, ObjectType, QueryType, gql,
                      make_executable_schema)
@@ -16,8 +16,11 @@ from web3.exceptions import InvalidAddress
 from sugomA.AmogusApp.models import Authentication, Room
 
 from .exceptions import (AuthenticationFailed, ContractNotFound,
-                         InvalidRoomParams, NotLandlordAccess, RoomNotFound,
-                         UnauthorizedAccess)
+                         InvalidRoomParams, NotLandlordAccess,
+                         RemovingRentedRoom, RoomNotFound, UnauthorizedAccess)
+
+with open("abi.txt") as f:
+    ABI = json.loads(f.read())
 
 
 class Hack:
@@ -166,7 +169,7 @@ def resolve_request_authentication(_, info, address):
     code_smell.reset()
     code_smell["requested_auth"] = 2
 
-    message = str(time.time()) + "_" + secrets.token_urlsafe(30)
+    message = str(time()) + "_" + secrets.token_urlsafe(30)
     print("requestAuthentication", address, message, code_smell)
     code_smell["auth_message"] = message
 
@@ -263,14 +266,13 @@ def check_contract_address(address):
         return
 
     RPC_URL = os.environ.get("RPC_URL", None)
-    print("RPC_URL", RPC_URL)
     assert RPC_URL is not None
-    web3 = Web3(Web3.HTTPProvider(RPC_URL))
+    w3 = Web3(Web3.HTTPProvider(RPC_URL))
 
     try:
-        code = web3.eth.get_code(address)
+        code = w3.eth.get_code(address)
     except InvalidAddress as e:
-        print("check_contract_address failure", e, address, RPC_URL, web3)
+        print("check_contract_address failure", e, address, RPC_URL, w3)
         raise ContractNotFound
 
     if code.hex() == "0x":
@@ -295,10 +297,24 @@ def resolve_set_room_contract_address(_, info, id, contractAddress=None):
 
 # setRoomPublicName(id: ID!, publicName: String): Room!
 
+
+def is_room_rented(room):
+    RPC_URL = os.environ.get("RPC_URL", None)
+    assert RPC_URL is not None
+    w3 = Web3(Web3.HTTPProvider(RPC_URL))
+
+    counter = w3.eth.contract(address=room.contractAddress, abi=ABI)
+    rent_end_time = counter.functions.getRentEndTime().call()
+    if time() < rent_end_time:
+        print("is_room_rented failure", time(), ">=", rent_end_time)
+        raise RemovingRentedRoom
+
+
 @mutation.field("removeRoom")
 def resolve_remove_room(_, info, id):
     print("setRoomContractAddress", id)
     room = get_existing_room(id)
+    is_room_rented(room)
 
     room_copy = copy(room)
     room.delete()
