@@ -5,10 +5,6 @@ from ..schema import code_smell
 
 
 def home(request):
-    count = str(code_smell["count_home_requests"])
-    code_smell["count_home_requests"] += 1
-    print("START\n", (count*10 + "\n") * 10)
-
     return render(request, "home.html")
 
 

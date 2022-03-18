@@ -28,8 +28,6 @@ class Hack:
         "auth_message": "<invalid>",
         "successfull_auth": False,
         "address": "<invalid>",
-
-        "count_home_requests": 0
     }
 
     def __init__(self, storage):
