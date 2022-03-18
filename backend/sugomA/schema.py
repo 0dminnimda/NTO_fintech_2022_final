@@ -3,6 +3,7 @@ import os
 import secrets
 import uuid
 from copy import copy
+from pathlib import Path
 from time import time
 
 from ariadne import (MutationType, ObjectType, QueryType, gql,
@@ -19,7 +20,7 @@ from .exceptions import (AuthenticationFailed, ContractNotFound,
                          InvalidRoomParams, NotLandlordAccess,
                          RemovingRentedRoom, RoomNotFound, UnauthorizedAccess)
 
-with open("abi.txt") as f:
+with open(Path(__file__).parent / "abi.txt") as f:
     ABI = json.loads(f.read())
 
 
