@@ -20,10 +20,7 @@
         }
 
         async function login () {
-            await window.ethereum.request({ method: 'eth_requestAccounts' })
-            window.web3 = new Web3(window.ethereum)
-
-            const address = (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
+            const address = (await ethereum.request({ method: 'eth_requestAccounts' }))[0]
 
             let response = await fetch('http://solution-web/graphql', {
                 method: 'POST',
@@ -36,8 +33,7 @@
                         message: requestAuthentication (
                             address: "` + address + `"
                         )
-                    }
-                        `
+                    }`
                 }),
             })
 
@@ -47,13 +43,14 @@
 
             success(address)
 
+            /*
             const r = signature.substr(0, 66)
             const s = "0x" + signature.substr(66, 64)
             const v = 28
 
             console.log(address, v, r, s)
 
-            response = await fetch('http://solution-web/graphql', {
+            response = await fetch('http://localhost/graphql', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,17 +79,17 @@
 
             setCookie('solution-web', cookies)
 
-            //success()
+            //success()*/
         }
 
         async function success (address) {
             let el = document.getElementsByClassName('authentication__authenticate')[0]
             el.parentNode.removeChild(el)
-            el = document.createElement('p')
-            el.classList.add('account__address')
+            let el2 = document.createElement('p')
+            el2.classList.add('account__address')
             let txt = document.createTextNode(address)
-            el.appendChild(txt)
-            document.body.appendChild(el)
+            el2.appendChild(txt)
+            document.body.appendChild(el2)
         }
 
         window.addEventListener('load', async function () {
