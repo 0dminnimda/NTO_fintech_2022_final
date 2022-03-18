@@ -137,7 +137,10 @@ def resolve_authentication(_, info):
     return Authentication.objects.get(address=code_smell["address"])
 
 
-# rooms: [Room!]!
+@query.field("rooms")
+def resolve_rooms(_, info):
+    print("rooms")
+    return Authentication.objects.all()
 
 
 def get_existing_room(id):
@@ -313,7 +316,7 @@ def is_room_rented(room):
 
 @mutation.field("removeRoom")
 def resolve_remove_room(_, info, id):
-    print("setRoomContractAddress", id)
+    print("removeRoom", id)
 
     require_authentication()
     require_landlord(Authentication.objects.get(address=code_smell["address"]))
