@@ -10,6 +10,7 @@ from eth_account import Account
 from eth_account.messages import encode_defunct
 from eth_keys.exceptions import BadSignature, ValidationError
 from web3 import Web3
+from web3.exceptions import InvalidAddress
 
 from sugomA.AmogusApp.models import Authentication, Room
 
@@ -137,8 +138,8 @@ def resolve_authentication(_, info):
 def get_existing_room(id):
     try:
         uid = uuid.UUID(id)
-    except ValueError:
-        print("get_existing_room failure", id)
+    except ValueError as e:
+        print("get_existing_room failure", e, id)
         raise RoomNotFound
 
     rooms = Room.objects.filter(id=uid)
@@ -258,15 +259,20 @@ def check_contract_address(address):
     if address is None:
         return
 
-    if not Web3.isAddress(address):
-        raise ContractNotFound
+    # if not Web3.isAddress(address):
+    #     raise ContractNotFound
 
     RPC_URL = os.environ.get("RPC_URL", None)
     print("RPC_URL", RPC_URL)
     assert RPC_URL is not None
     web3 = Web3(Web3.HTTPProvider(RPC_URL))
 
-    code = web3.eth.get_code(address)
+    try:
+        code = web3.eth.get_code(address)
+    except InvalidAddress as e:
+        print("check_contract_address failure", e, address, RPC_URL, web3)
+        raise ContractNotFound
+
     print("code", code, type(code), dir(code))
     print(code.hex())
 
