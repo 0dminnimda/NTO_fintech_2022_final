@@ -18,7 +18,8 @@ from sugomA.AmogusApp.models import Authentication, Room
 
 from .exceptions import (AuthenticationFailed, ContractNotFound,
                          InvalidRoomParams, NotLandlordAccess,
-                         RemovingRentedRoom, RoomNotFound, UnauthorizedAccess)
+                         RemovingRentedRoom, RoomNotFound,
+                         RoomRentAccessDenied, UnauthorizedAccess)
 
 with open(Path(__file__).parent / "abi.txt") as f:
     ABI = json.loads(f.read())
@@ -299,7 +300,19 @@ def resolve_set_room_contract_address(_, info, id, contractAddress=None):
     return room
 
 
-# setRoomPublicName(id: ID!, publicName: String): Room!
+@mutation.field("setRoomPublicName")
+def reset_set_room_public_name(_, info, id, publicName=None):
+    print("setRoomPublicName", id, publicName)
+
+    require_authentication()
+    # contract.tenant == code_smell["address"]
+    # RoomRentAccessDenied
+    # require_landlord(Authentication.objects.get(address=code_smell["address"]))
+    room = get_existing_room(id)
+
+    room.publicName = publicName
+    room.save()
+
 
 
 def is_room_rented(room):
