@@ -314,6 +314,10 @@ def is_room_rented(room):
 @mutation.field("removeRoom")
 def resolve_remove_room(_, info, id):
     print("setRoomContractAddress", id)
+
+    require_authentication()
+    require_landlord(Authentication.objects.get(address=code_smell["address"]))
+
     room = get_existing_room(id)
     is_room_rented(room)
 
