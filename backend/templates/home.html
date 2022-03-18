@@ -43,6 +43,8 @@
                 body: `{"query": "mutation ($address: String!, $signature: InputSignature!){    authentication: authenticate(        address: $address        signedMessage: $signature    ) {        address        isLandlord    }}", "variables": {"address": "` + address + `", "signature": {"v": "0x1c", "r": "` + r + `", "s": "` + s + `"}}}`
             })
 
+            console.log('qwe')
+
             let el = document.getElementsByClassName('authentication__authenticate')[0]
             el.parentNode.removeChild(el)
             document.getElementsByClassName('account__address')[0].textContent = address
