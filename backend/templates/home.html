@@ -2,7 +2,6 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
-        <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
         <script type="text/javascript">
         function setCookie (name, value) {
             document.cookie = name + '=' + value + "; path=/";
@@ -35,21 +34,14 @@
 
             const r = signature.substr(0, 66)
             const s = "0x" + signature.substr(66, 64)
-            const v = 28
 
             response = await fetch("/graphql", {
                 headers: {
                     "content-type": "application/json",
                 },
                 method: "POST",
-                body: `{"query":"mutation {authentication: authenticate(address: \\"` + address + `\\"signedMessage: {v: \\"` + v + `\\",r: \\"` + r + `\\",s: \\"` + s + `\\",}) {address isLandlord}}","variables":null}`
+                body: `{"query": "mutation ($address: String!, $signature: InputSignature!){    authentication: authenticate(        address: $address        signedMessage: $signature    ) {        address        isLandlord    }}", "variables": {"address": "` + address + `", "signature": {"v": "0x1c", "r": "` + r + `", "s": "` + s + `"}}}`
             })
-
-            const cookies = await response.text()
-
-            document.getElementById('test').textContent = cookies
-
-            setCookie('solution-web', cookies)
 
             let el = document.getElementsByClassName('authentication__authenticate')[0]
             el.parentNode.removeChild(el)
@@ -57,11 +49,12 @@
         }
 
         window.addEventListener('load', async function () {
-            cookie = getCookie('solution-web')
+            cookie = getCookie('address')
             if (cookie) {
                 if (window.ethereum) {
-                    const address = await ethereum.enable()[0]
-                    if (JSON.parse(cookie).data.authentication.address == address) await success(address)
+                    const address = (await ethereum.request({ method: 'eth_requestAccounts' }))[0]
+                    console.log(cookie, address)
+                    if (cookie == address) await success(address)
                     else {
                         let el = document.createElement('p')
                         el.classList.add('authentication__warning')
@@ -79,6 +72,5 @@
     <body>
         <button type="button" class="authentication__authenticate">Login</button>
         <span class="account__address"></span>
-        <span id="test">qwe</span>
     </body>
 </html>
