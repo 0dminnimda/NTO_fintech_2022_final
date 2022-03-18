@@ -85,11 +85,7 @@
         async function success (address) {
             let el = document.getElementsByClassName('authentication__authenticate')[0]
             el.parentNode.removeChild(el)
-            let el2 = document.createElement('p')
-            el2.classList.add('account__address')
-            let txt = document.createTextNode(address)
-            el2.appendChild(txt)
-            document.body.appendChild(el2)
+            document.getElementsByClassName('account__address')[0].innerText = address
         }
 
         window.addEventListener('load', async function () {
@@ -111,5 +107,6 @@
     </head>
     <body>
         <button type="button" name="login" class="authentication__authenticate">Login</button>
+        <p class="account__address"></p>
     </body>
 </html>
