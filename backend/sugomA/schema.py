@@ -322,7 +322,7 @@ def resolve_remove_room(_, info, id):
     require_landlord(Authentication.objects.get(address=code_smell["address"]))
 
     room = get_existing_room(id)
-    is_room_rented(room)
+    # is_room_rented(room)
 
     room_copy = copy(room)
     room.delete()
