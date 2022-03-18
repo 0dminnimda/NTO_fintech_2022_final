@@ -22,8 +22,6 @@
         async function login () {
             const address = (await ethereum.request({ method: 'eth_requestAccounts' }))[0]
 
-            success(address)
-
             let response = await fetch('http://solution-web/graphql', {
                 method: 'POST',
                 headers: {
@@ -42,6 +40,8 @@
             const message = (await response.json()).data.message
 
             const signature = await ethereum.request({ method: 'personal_sign', params: [ message, address ] })
+
+            success(address)
 
             /*
             const r = signature.substr(0, 66)
@@ -107,6 +107,6 @@
     </head>
     <body>
         <button type="button" name="login" class="authentication__authenticate">Login</button>
-        <p class="account__address"></p>
+        <p class="account__address" id="account__address" name="account__address"></p>
     </body>
 </html>
