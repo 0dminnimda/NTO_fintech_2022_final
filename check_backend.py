@@ -73,8 +73,9 @@ def test2():
     son, text = poster(session, data)
     asserter(data, need, text)
 
-    data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
+    contract_address = "0x" + secrets.token_hex(32)
     if isLandlord:
+        data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
         son, text = poster(session, data)
         room_id = son["data"]["createRoom"]["id"]
         need = '{"data": {"createRoom": {"id": "' + room_id + '", "internalName": "some-name", "area": 100.5, "location": "some location"}}}'  # noqa
@@ -94,13 +95,7 @@ def test2():
         need = need
         son, text = poster(session, data)
         asserter(data, need, text)
-    else:
-        need = '{"errors": [{"message": "This method is available only for the landlord"}]}'  # noqa
-        son, text = poster(session, data)
-        asserter(data, need, text)
 
-    contract_address = "0x" + secrets.token_hex(32)
-    if isLandlord:
         data = 'mutation {setRoomContractAddress(id: "' + room_id + '", contractAddress: "' + contract_address + '") {id, contractAddress}}'  # noqa
         need = '{"data": {"setRoomContractAddress": {"id": "' + room_id + '", "contractAddress": "' + contract_address + '"}}}'  # noqa
         son, text = poster(session, data)
@@ -111,11 +106,46 @@ def test2():
         son, text = poster(session, data)
         asserter(data, need, text)
 
-        data = 'mutation {setRoomContractAddress(id: "<nonexisting-room-id>", contractAddress: "<contract-address>") {id, contractAddress}}'
+        data = 'mutation {setRoomContractAddress(id: "<nonexisting-room-id>", contractAddress: "<contract-address>") {id, contractAddress}}'  # noqa
         need = '{"errors": [{"message": "Room with such ID not found"}]}'
         son, text = poster(session, data)
         asserter(data, need, text)
+
+        data = 'mutation {editRoom(id: "' + room_id + '", room: {internalName: "<new-name>", area: 42, location: "<new-location>"}) {id, internalName, area, location}}'  # noqa
+        need = '{"data": {"editRoom": {"id": "' + room_id + '", "internalName": "<new-name>", "area": 42, "location": "<new-location>"}}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
+        data = 'query {room(id: "' + room_id + '") {id, internalName, area, location}}'  # noqa
+        need = '{"data": {"room": {"id": "' + room_id + '", "internalName": "<new-name>", "area": 42, "location": "<new-location>"}}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
+        data = 'mutation {editRoom(id: "<room-id>",room: {internalName: "<changed-name>", area: 42, location: "<changed-location>"}) {id, internalName, area, location}}'  # noqa
+        need = '{"errors": [{"message": "Room with such ID not found"}]}'
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
+        data = 'mutation {editRoom(id: "' + room_id + '", room: {internalName: "<changed-name>", area: -1.1, location: "<changed-location>"}) {id, internalName, area, location}}'  # noqa
+        need = '{"errors": [{ "message": "The room area must be greater than zero" }]}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
+        data = 'mutation {editRoom(id: "' + room_id + '", room: {internalName: "<changed-name>", area: 0, location: "<changed-location>"}) {id, internalName, area, location}}'  # noqa
+        need = '{"errors": [{ "message": "The room area must be greater than zero" }]}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
+        data = 'query {room(id: "' + room_id + '") {id, internalName, area, location}}'  # noqa
+        need = '{"data": {"room": {"id": "' + room_id + '", "internalName": "<new-name>", "area": 42, "location": "<new-location>"}}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
     else:
+        data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
+        need = '{"errors": [{"message": "This method is available only for the landlord"}]}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
         data = 'mutation {setRoomContractAddress(id: "<room-id>", contractAddress: "' + contract_address + '") {id, contractAddress}}'  # noqa
         need = '{"errors": [{"message": "This method is available only for the landlord"}]}'  # noqa
         son, text = poster(session, data)
