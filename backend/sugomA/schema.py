@@ -245,9 +245,9 @@ def resolve_create_room(_, info, room):
 def resolve_edit_room(_, info, id, room):
     print("editRoom", id, room)
 
-    db_room = get_existing_room(id)
     require_authentication()
     require_landlord(Authentication.objects.get(address=code_smell["address"]))
+    db_room = get_existing_room(id)
     validate_room(room)
 
     for name, value in room.items():
@@ -281,9 +281,9 @@ def check_contract_address(address):
 def resolve_set_room_contract_address(_, info, id, contractAddress=None):
     print("setRoomContractAddress", id, contractAddress)
 
-    room = get_existing_room(id)
     require_authentication()
     require_landlord(Authentication.objects.get(address=code_smell["address"]))
+    room = get_existing_room(id)
     check_contract_address(contractAddress)
 
     room.contractAddress = contractAddress
