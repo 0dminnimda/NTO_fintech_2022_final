@@ -184,6 +184,8 @@ def resolve_request_authentication(_, info, address):
 
 @mutation.field("authenticate")
 def resolve_authenticate(_, info, address, signedMessage):
+    # session = info.context["request"].session
+
     try:
         recovered = Account.recover_message(
             encode_defunct(text=code_smell["auth_message"]),  # type: ignore
