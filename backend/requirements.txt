@@ -1,3 +1,4 @@
 django==3.2.11
 ariadne_django==0.2.0
 eth_account==0.6.1
+web3==3.16.3
