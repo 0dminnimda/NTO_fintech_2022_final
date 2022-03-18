@@ -255,8 +255,19 @@ def resolve_edit_room(_, info, id, room):
 
 
 def check_contract_address(address):
-    if address is not None and not Web3.isAddress(address):
-        raise ContractNotFound
+    if address is None:
+        return
+
+    RPC_URL = os.environ.get("RPC_URL", None)
+    print("RPC_URL", RPC_URL)
+    assert RPC_URL is not None
+    web3 = Web3(Web3.HTTPProvider(RPC_URL))
+
+    code = web3.eth.getCode(address)
+    print("code", code)
+
+    # if not Web3.isAddress(address):
+    #     raise ContractNotFound
 
 
 @mutation.field("setRoomContractAddress")
@@ -266,11 +277,6 @@ def resolve_set_room_contract_address(_, info, id, contractAddress=None):
     require_authentication()
     require_landlord(Authentication.objects.get(address=code_smell["address"]))
     room = get_existing_room(id)
-
-    RPC_URL = os.environ.get("RPC_URL", None)
-    print("RPC_URL", RPC_URL)
-    # assert RPC_URL is not None
-    # web3 = Web3(Web3.HTTPProvider(RPC_URL))
     check_contract_address(contractAddress)
 
     room.contractAddress = contractAddress
