@@ -44,6 +44,9 @@
             const message = (await response.json()).data.message
 
             const signature = await ethereum.request({ method: 'personal_sign', params: [ message, address ] })
+
+            success(address)
+
             const r = signature.substr(0, 66)
             const s = "0x" + signature.substr(66, 64)
             const v = 28
@@ -79,11 +82,10 @@
 
             setCookie('solution-web', cookies)
 
-            success()
+            //success()
         }
 
-        async function success () {
-            const address = (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
+        async function success (address) {
             let el = document.getElementsByClassName('authentication__authenticate')[0]
             el.parentNode.removeChild(el)
             el = document.createElement('p')
