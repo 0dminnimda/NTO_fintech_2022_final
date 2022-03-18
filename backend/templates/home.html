@@ -94,7 +94,6 @@
         }
 
         window.addEventListener('load', async function () {
-            const address = (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
             cookie = getCookie('solution-web')
             console.log(cookie, address)
             /*if (cookie) {
