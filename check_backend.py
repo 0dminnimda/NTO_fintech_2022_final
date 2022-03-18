@@ -121,7 +121,7 @@ def test2():
         son, text = poster(session, data)
         asserter(data, need, text)
 
-        data = 'mutation {editRoom(id: "<room-id>",room: {internalName: "<changed-name>", area: 42, location: "<changed-location>"}) {id, internalName, area, location}}'  # noqa
+        data = 'mutation {editRoom(id: "' + secrets.token_hex(32) + '",room: {internalName: "<changed-name>", area: 42, location: "<changed-location>"}) {id, internalName, area, location}}'  # noqa
         need = '{"errors": [{"message": "Room with such ID not found"}]}'
         son, text = poster(session, data)
         asserter(data, need, text)
