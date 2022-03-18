@@ -3,8 +3,11 @@ from django.http import HttpResponse
 from ..schema import code_smell
 
 
-# def MetaMask_auth(request):
 def home(request):
+    count = str(code_smell["count_home_requests"])
+    code_smell["count_home_requests"] += 1
+    print("START\n", (count*10 + "\n") * 10)
+
     return render(request, "home.html")
 
 
