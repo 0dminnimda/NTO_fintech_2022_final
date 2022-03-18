@@ -233,6 +233,36 @@ def get_existing_room(id):
     return rooms[0]
 
 
+@mutation.field("editRoom")
+def resolve_edit_room(_, info, id, room):
+    print("editRoom", id, room)
+
+    require_authentication()
+    require_landlord(Authentication.objects.get(address=code_smell["address"]))
+    db_room = get_existing_room(id)
+    validate_room(room)
+
+    for name, value in room.items():
+        setattr(db_room, name, value)
+
+    db_room.save()
+    return db_room
+
+
+@mutation.field("setRoomContractAddress")
+def resolve_set_room_contract_address(_, info, id, contractAddress):
+    print("setRoomContractAddress", id, contractAddress)
+
+    require_authentication()
+    require_landlord(Authentication.objects.get(address=code_smell["address"]))
+    room = get_existing_room(id)
+
+    room.contractAddress = contractAddress
+    room.save()
+
+    return room
+
+
 schema = make_executable_schema(
     gql(type_defs), query, mutation,
     # authentication
