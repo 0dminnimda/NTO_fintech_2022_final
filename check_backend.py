@@ -140,6 +140,16 @@ def test2():
         need = '{"data": {"room": {"id": "' + room_id + '", "internalName": "<new-name>", "area": 42, "location": "<new-location>"}}}'  # noqa
         son, text = poster(session, data)
         asserter(data, need, text)
+
+        data = 'mutation {setRoomContractAddress(id: "' + room_id + '") {id, contractAddress}}'  # noqa
+        need = '{"data": {"setRoomContractAddress": {"id": "' + room_id + '", "contractAddress": null}}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
+        data = 'query {room(id: "' + room_id + '") {id, contractAddress}}'
+        need = '{"data": {"room": {"id": "' + room_id + '", "contractAddress": null}}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
     else:
         data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
         need = '{"errors": [{"message": "This method is available only for the landlord"}]}'  # noqa
