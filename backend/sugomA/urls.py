@@ -102,8 +102,8 @@ def graphql_view(request: HttpRequest):
     if code_smell["requested_auth"] > 0:
         code_smell["requested_auth"] -= 1
 
-    if "data" in result and "errors" in result:
-        del result["data"]
+    # if "data" in result and "errors" in result:
+    #     del result["data"]
 
     response = JsonResponse(result, status=status_code)
 
