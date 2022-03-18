@@ -186,56 +186,50 @@ def resolve_authenticate(_, info, address, signedMessage):
         address=address, isLandlord=(address == isLandlord))
 
 
+def require_authentication():
+    if not code_smell["successfull_auth"]:
+        print("require_authentication failure", code_smell["successfull_auth"], code_smell)  # noqa
+        raise UnauthorizedAccess
+
+
+def require_landlord(authentication):
+    if not authentication.isLandlord:
+        print("require_landlord failure", authentication.isLandlord, authentication)  # noqa
+        raise NotLandlordAccess
+
+
+def validate_room(room):
+    if room["area"] <= 0:
+        print("validate_room failure", room["area"], room)
+        raise InvalidRoomParams
+
+
 @mutation.field("createRoom")
 def resolve_create_room(_, info, room):
     print("createRoom", room)
 
-    if not code_smell["successfull_auth"]:
-        print("createRoom failure", room, code_smell["successfull_auth"], code_smell)  # noqa
-        raise UnauthorizedAccess
-
-    authentication = Authentication.objects.get(address=code_smell["address"])
-    if not authentication.isLandlord:
-        print("createRoom failure", room, authentication.isLandlord, authentication)  # noqa
-        raise NotLandlordAccess
-
-    if room["area"] <= 0:
-        print("createRoom failure", room, room["area"])  # noqa
-        raise InvalidRoomParams
+    require_authentication()
+    require_landlord(Authentication.objects.get(address=code_smell["address"]))
+    validate_room(room)
 
     # each room have unique id, so no worries about multiple instances
     return Room.objects.create(internalName=room["internalName"],
                                area=room["area"], location=room["location"])
 
 
-@mutation.field("setRoomContractAddress")
-def resolve_set_room_contract_address(_, info, id, contractAddress):
-    print("setRoomContractAddress", id, contractAddress)
-
-    if not code_smell["successfull_auth"]:
-        print("setRoomContractAddress failure", code_smell["successfull_auth"], code_smell)  # noqa
-        raise UnauthorizedAccess
-
-    authentication = Authentication.objects.get(address=code_smell["address"])
-    print(authentication)
-    if not authentication.isLandlord:
-        print("setRoomContractAddress failure", authentication, code_smell["address"], code_smell)  # noqa
-        raise NotLandlordAccess
-
+def get_existing_room(id):
     try:
         uid = uuid.UUID(id)
     except ValueError:
-        print("setRoomContractAddress failure", id)
+        print("get_existing_room failure", id)
         raise RoomNotFound
 
     rooms = Room.objects.filter(id=uid)
     if len(rooms) == 0:
-        print("setRoomContractAddress failure", id, uid, rooms)
+        print("get_existing_room failure", id, uid, rooms)
         raise RoomNotFound
 
-    rooms[0].contractAddress = contractAddress
-    rooms[0].save()
-
+    assert len(rooms) == 1
     return rooms[0]
 
 
