@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from ..schema import code_smell
@@ -12,6 +13,9 @@ def home(request):
 
 
 def check(request):
+    # if request.method == "POST":
+    #     print(json.loads(request.body))
+
     response = render(request, "home.html")
 
     # cookies
