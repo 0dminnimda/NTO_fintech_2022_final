@@ -263,8 +263,8 @@ def check_contract_address(address):
     assert RPC_URL is not None
     web3 = Web3(Web3.HTTPProvider(RPC_URL))
 
-    code = web3.eth.getCode(address)
-    print("code", code)
+    code = web3.eth.get_code(address)
+    print("code", code.decode("utf-8"), code)
 
     # if not Web3.isAddress(address):
     #     raise ContractNotFound
