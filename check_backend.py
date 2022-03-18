@@ -73,7 +73,7 @@ def test2():
     son, text = poster(session, data)
     asserter(data, need, text)
 
-    contract_address = "0x" + secrets.token_hex(32)
+    contract_address = "d3cda913deb6f67967b99d67acdfa1712c293601" # "0x" + secrets.token_hex(32)
     if isLandlord:
         data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
         son, text = poster(session, data)
@@ -93,6 +93,11 @@ def test2():
 
         data = 'mutation {createRoom(room: {internalName: "some-name", area: 0, location: "some location"}) {id, internalName, area, location}}'  # noqa
         need = need
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
+        data = 'mutation {setRoomContractAddress(id: "' + room_id + '", contractAddress: "<invalid-address>") {id, contractAddress}}'  # noqa
+        need = '{"errors": [{ "message": "Contract with such address not found" }]}'  # noqa
         son, text = poster(session, data)
         asserter(data, need, text)
 
