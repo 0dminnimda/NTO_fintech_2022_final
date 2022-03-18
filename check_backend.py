@@ -187,6 +187,13 @@ def test2():
         son, text = poster(session, data)
         asserter(data, need, text)
         # AC-106-01 <
+
+        # AC-107-01 >
+        data = 'query {rooms { id }}'
+        need = '{"data": {"rooms": [{ "id": "<room-1>" },{ "id": "<room-2>" }]}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+        # AC-107-01 <
     else:
         data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
         need = '{"data": null, "errors": [{"message": "This method is available only for the landlord"}]}'  # noqa
