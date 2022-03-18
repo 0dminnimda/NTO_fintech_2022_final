@@ -156,6 +156,18 @@ def test2():
         need = '{"data": {"room": {"id": "' + room_id + '", "contractAddress": null}}}'  # noqa
         son, text = poster(session, data)
         asserter(data, need, text)
+
+        # > AC-106-01
+        data = 'mutation {removeRoom(id: "' + room_id + '") {id, internalName, area, location}}'  # noqa
+        need = '{"data": {"removeRoom": {"id": "' + room_id + '", "internalName": "<new-name>", "area": 42, "location": "<new-location>"}}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
+        data = 'query {room(id: "' + room_id + '") {id, internalName, area, location}}'  # noqa
+        need = '{"data": null,"errors": [{ "message": "Room with such ID not found" }]}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+        # < AC-106-01
     else:
         data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
         need = '{"data": null, "errors": [{"message": "This method is available only for the landlord"}]}'  # noqa
