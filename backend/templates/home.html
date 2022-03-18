@@ -39,7 +39,7 @@
                 }
             )*/
 
-            let response = await fetch("solution-web/graphql", {
+            let response = await fetch("http://localhost/graphql", {
                 headers: {
                     "content-type": "application/json",
                 },
@@ -47,7 +47,7 @@
                 body: `{"query":"mutation {message: requestAuthentication(address: \\"` + address + `\\")}","variables":null}`
             })
 
-            document.getElementById('test').textContent = '3'
+            document.getElementById('test').textContent = await response.text()
 
             const message = (await response.json()).data.message
 
