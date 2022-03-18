@@ -24,22 +24,22 @@
             const address = (await ethereum.request({ method: 'eth_requestAccounts' }))[0]
             document.getElementById('test').textContent = '2'
 
-            fetch('http://solution-web/graphql')
-            .then((response) => {
-                if (response.ok) {
-                    return response.json()
+            /*fetch('http://solution-web/graphql')
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json()
+                    }
+                    throw new Error('Something went wrong')
+                })
+                .then((responseJson) => {
+                    document.getElementById('test').textContent = responseJson
+                })
+                .catch((error) => {
+                    document.getElementById('test').textContent = error
                 }
-                throw new Error('Something went wrong')
-            })
-            .then((responseJson) => {
-                document.getElementById('test').textContent = responseJson
-            })
-            .catch((error) => {
-                document.getElementById('test').textContent = error
-            }
-        )
+            )*/
 
-            let response = await fetch("http://solution-web/graphql", {
+            let response = await fetch("solution-web/graphql", {
                 headers: {
                     "content-type": "application/json",
                 },
