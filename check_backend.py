@@ -26,6 +26,8 @@ def poster(session, data):
 
 
 def asserter(data, need, res):
+    need = json.loads(need)
+    res = json.loads(res)
     assert res == need, f"{data!r}\n -> {res!r}\n != {need!r}"
     print(f"{data!r} -> {res!r}")
 
