@@ -271,8 +271,8 @@ def check_contract_address(address):
     print(code.hex())
 
     if code.hex() == "0x":
+        raise ContractNotFound
 
-    #     raise ContractNotFound
 
 
 @mutation.field("setRoomContractAddress")
