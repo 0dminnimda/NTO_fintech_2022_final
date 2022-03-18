@@ -73,7 +73,7 @@ def test2():
     son, text = poster(session, data)
     asserter(data, need, text)
 
-    contract_address = "d3cda913deb6f67967b99d67acdfa1712c293601" # "0x" + secrets.token_hex(32)
+    contract_address = "d3cda913deb6f67967b99d67acdfa1712c293601"  # "0x" + secrets.token_hex(32)
     if isLandlord:
         data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
         son, text = poster(session, data)
