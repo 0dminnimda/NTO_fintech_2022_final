@@ -195,7 +195,7 @@ def resolve_authenticate(_, info, address, signedMessage):
         raise AuthenticationFailed
 
     print("authenticate", address, recovered, signedMessage, code_smell)
-    if recovered != address or code_smell["requested_auth"] != 1:
+    if recovered.lower() != address.lower() or code_smell["requested_auth"] != 1:
         print("authenticate failure", recovered, address, code_smell["requested_auth"])  # noqa
         code_smell.reset()
         raise AuthenticationFailed
