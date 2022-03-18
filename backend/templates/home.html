@@ -25,7 +25,7 @@
 
             const address = (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
 
-            let response = await fetch('http://localhost/graphql', {
+            let response = await fetch('http://solution-web/graphql', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,7 @@
 
             console.log(address, v, r, s)
 
-            response = await fetch('http://localhost/graphql', {
+            response = await fetch('http://solution-web/graphql', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
