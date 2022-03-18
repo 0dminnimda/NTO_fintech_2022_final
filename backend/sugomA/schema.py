@@ -2,6 +2,7 @@ import json
 import os
 import secrets
 import time
+import uuid
 
 from ariadne import (MutationType, ObjectType, QueryType, gql,
                      make_executable_schema)
@@ -12,7 +13,7 @@ from eth_keys.exceptions import BadSignature, ValidationError
 from sugomA.AmogusApp.models import Authentication, Room
 
 from .exceptions import (AuthenticationFailed, InvalidRoomParams,
-                         NotLandlordAccess, UnauthorizedAccess)
+                         NotLandlordAccess, UnauthorizedAccess, RoomNotFound)
 
 
 class Hack:
@@ -211,11 +212,31 @@ def resolve_create_room(_, info, room):
 def resolve_set_room_contract_address(_, info, id, contractAddress):
     print("setRoomContractAddress", id, contractAddress)
 
-    room = Room.objects.get(id=id)
-    room.contractAddress = contractAddress
-    room.save()
+    if not code_smell["successfull_auth"]:
+        print("setRoomContractAddress failure", code_smell["successfull_auth"], code_smell)  # noqa
+        raise UnauthorizedAccess
 
-    return room
+    authentication = Authentication.objects.get(address=code_smell["address"])
+    print(authentication)
+    if not authentication.isLandlord:
+        print("setRoomContractAddress failure", authentication, code_smell["address"], code_smell)  # noqa
+        raise NotLandlordAccess
+
+    try:
+        uid = uuid.UUID(id)
+    except ValueError:
+        print("setRoomContractAddress failure", id)
+        raise RoomNotFound
+
+    rooms = Room.objects.filter(id=uid)
+    if len(rooms) == 0:
+        print("setRoomContractAddress failure", id, uid, rooms)
+        raise RoomNotFound
+
+    rooms[0].contractAddress = contractAddress
+    rooms[0].save()
+
+    return rooms[0]
 
 
 schema = make_executable_schema(
