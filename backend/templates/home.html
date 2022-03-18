@@ -24,32 +24,28 @@
             const address = (await ethereum.request({ method: 'eth_requestAccounts' }))[0]
             document.getElementById('test').textContent = '2'
 
-            /*fetch('http://solution-web/graphql')
-                .then((response) => {
-                    if (response.ok) {
-                        return response.json()
-                    }
-                    throw new Error('Something went wrong')
-                })
-                .then((responseJson) => {
-                    document.getElementById('test').textContent = responseJson
-                })
-                .catch((error) => {
-                    document.getElementById('test').textContent = error
-                }
-            )*/
-
-            let response = await fetch("http://localhost/graphql", {
+            /*let response = await fetch("http://localhost/graphql", {
                 headers: {
                     "content-type": "application/json",
                 },
                 method: "POST",
                 body: `{"query":"mutation {message: requestAuthentication(address: \\"` + address + `\\")}","variables":null}`
-            })
+            })*/
 
-            document.getElementById('test').textContent = await response.text()
+            var xhr = new XMLHttpRequest();
 
-            const message = (await response.json()).data.message
+            var body = `{"query":"mutation {message: requestAuthentication(address: \\"` + address + `\\")}","variables":null}`
+
+            xhr.open("POST", '/graphql', false);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.send(body);
+
+            response = xhr.responseText
+
+            document.getElementById('test').textContent = response
+
+            const message = JSON.parse(response).data.message
 
             document.getElementById('test').textContent = message
 
