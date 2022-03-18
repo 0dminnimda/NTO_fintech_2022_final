@@ -73,8 +73,11 @@ code_smell = Hack({})
 type_defs = """
 type Query {
     authentication: Authentication
+
     rooms: [Room!]!
     room(id: ID!): Room!
+
+    ticket(id: ID!): Ticket!
 }
 
 type Mutation {
@@ -89,15 +92,19 @@ type Mutation {
     setRoomContractAddress(id: ID!, contractAddress: String): Room!
     setRoomPublicName(id: ID!, publicName: String): Room!
     removeRoom(id: ID!): Room!
+
+    createTicket(ticket: InputTicket!): Ticket!
 }
 
 # Authentication
+
 type Authentication {
     address: String!
     isLandlord: Boolean!
 }
 
 # Rooms
+
 type Room {
     id: ID!
     internalName: String!
@@ -108,17 +115,77 @@ type Room {
     publicName: String
 }
 
-# Input
 input InputRoom {
     internalName: String!
     area: Float!
     location: String!
 }
 
+# Tickets
+
+type Ticket {
+    id: ID!
+    room: Room!
+    value: Wei!
+    deadline: Datetime!
+    nonce: Nonce!
+    cashierSignature: Signature!
+}
+
+input InputTicket {
+    room: ID!
+    nonce: InputNonce!
+    value: InputWei!
+    deadline: InputDatetime!
+    cashierSignature: InputSignature!
+}
+
+# Primitives
+
+## Signature
+
+type Signature {
+    v: String!
+    r: String!
+    s: String!
+}
+
 input InputSignature {
     v: String!
     r: String!
     s: String!
+}
+
+## Wei
+
+type Wei {
+    wei: String!
+}
+
+input InputWei {
+    wei: String!
+}
+
+## Datetime
+##
+## In ISO 8601 format, e.g. `2022-03-15T06:00:00.000Z`
+
+type Datetime {
+    datetime: String!
+}
+
+input InputDatetime {
+    datetime: String!
+}
+
+## Nonce
+
+type Nonce {
+    value: String!
+}
+
+input InputNonce {
+    value: String!
 }
 """
 
