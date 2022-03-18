@@ -9,11 +9,13 @@ from ariadne import (MutationType, ObjectType, QueryType, gql,
 from eth_account import Account
 from eth_account.messages import encode_defunct
 from eth_keys.exceptions import BadSignature, ValidationError
+from web3 import Web3
 
 from sugomA.AmogusApp.models import Authentication, Room
 
-from .exceptions import (AuthenticationFailed, InvalidRoomParams,
-                         NotLandlordAccess, UnauthorizedAccess, RoomNotFound)
+from .exceptions import (AuthenticationFailed, ContractNotFound,
+                         InvalidRoomParams, NotLandlordAccess, RoomNotFound,
+                         UnauthorizedAccess)
 
 
 class Hack:
@@ -252,6 +254,11 @@ def resolve_edit_room(_, info, id, room):
     return db_room
 
 
+def check_contract_address(address):
+    if address is not None and not Web3.isAddress(address):
+        raise ContractNotFound
+
+
 @mutation.field("setRoomContractAddress")
 def resolve_set_room_contract_address(_, info, id, contractAddress=None):
     print("setRoomContractAddress", id, contractAddress)
@@ -259,6 +266,12 @@ def resolve_set_room_contract_address(_, info, id, contractAddress=None):
     require_authentication()
     require_landlord(Authentication.objects.get(address=code_smell["address"]))
     room = get_existing_room(id)
+
+    # RPC_URL = os.environ.get("RPC_URL", None)
+    # print("RPC_URL", RPC_URL)
+    # assert RPC_URL is not None
+    # web3 = Web3(Web3.HTTPProvider(RPC_URL))
+    check_contract_address(contractAddress)
 
     room.contractAddress = contractAddress
     room.save()
