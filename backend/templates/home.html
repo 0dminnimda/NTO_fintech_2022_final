@@ -1,17 +1,118 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+        <script type="text/javascript">
+        function setCookie (name, value) {
+            document.cookie = name + '=' + value + "; path=/";
+        }
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>sugomA</title>
-  </head>
-  <body>
-    <h>Links:</h>
-    <br>
-    <a href="/">Home</a>
-    <br>
-    <a href="/graphql">GraphQl</a>
-    <br>
-    <a href="/check">Check</a>
-  </body>
+        function getCookie (name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i = 0; i < ca.length; i += 1) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        async function login () {
+            await window.ethereum.request({ method: 'eth_requestAccounts' })
+            window.web3 = new Web3(window.ethereum)
+
+            const address = (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
+
+            let response = await fetch('http://localhost/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                    mutation {
+                        message: requestAuthentication (
+                            address: "` + address + `"
+                        )
+                    }
+                        `
+                }),
+            })
+
+            const message = (await response.json()).data.message
+
+            const signature = await ethereum.request({ method: 'personal_sign', params: [ message, address ] })
+            const r = signature.substr(0, 66)
+            const s = "0x" + signature.substr(66, 64)
+            const v = 28
+
+            console.log(address, v, r, s)
+
+            response = await fetch('http://localhost/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                    mutation {
+                        authentication: authenticate (
+                            address: "` + address + `"
+                            signedMessage: {
+                                signature: {
+                                    v: "` + v + `",
+                                    r: "` + r + `",
+                                    s: "` + s + `"
+                                }
+                            }) {
+                            address
+                            isLandlord
+                        }
+                    }
+                        `
+                }),
+            })
+
+            const cookies = await response.json()
+
+            setCookie('solution-web', cookies)
+
+            success()
+        }
+
+        async function success () {
+            const address = (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
+            let el = document.getElementsByClassName('authentication__authenticate')[0]
+            el.parentNode.removeChild(el)
+            el = document.createElement('p')
+            el.classList.add('account__address')
+            let txt = document.createTextNode(address)
+            el.appendChild(txt)
+            document.body.appendChild(el)
+        }
+
+        window.addEventListener('load', async function () {
+            const address = (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
+            cookie = getCookie('solution-web')
+            console.log(cookie, address)
+            /*if (cookie) {
+                if (cookie == address) await success()
+                else {
+                    let el = document.createElement('p')
+                    el.classList.add('authentication__warning')
+                    let txt = document.createTextNode('Your MetaMask account is different from the one you authenticated with before')
+                    el.appendChild(txt)
+                    document.body.appendChild(el)
+                }
+            }*/
+            document.getElementsByClassName('authentication__authenticate')[0].onclick = login
+        })
+        </script>
+        <title>Solution-Web</title>
+    </head>
+    <body>
+        <button type="button" name="login" class="authentication__authenticate">Login</button>
+    </body>
 </html>
