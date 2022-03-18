@@ -85,7 +85,7 @@
         async function success (address) {
             let el = document.getElementsByClassName('authentication__authenticate')[0]
             el.parentNode.removeChild(el)
-            document.getElementsByClassName('account__address')[0].innerText = address
+            document.getElementsByClassName('account__address')[0].textContent = address
         }
 
         window.addEventListener('load', async function () {
