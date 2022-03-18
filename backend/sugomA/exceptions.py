@@ -26,6 +26,10 @@ class RoomNotFound(sugomAException):
     message = "Room with such ID not found"
 
 
+class ContractNotFound(sugomAException):
+    message = "Contract with such address not found"
+
+
 def error_formatter(error: GraphQLError, debug: bool = False) -> dict:
     # formatted = error.formatted
 
