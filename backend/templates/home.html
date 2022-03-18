@@ -20,30 +20,23 @@
         }
 
         async function login () {
-            document.getElementById('test').textContent = '1';
+            document.getElementById('test').textContent = '1'
             const address = (await ethereum.request({ method: 'eth_requestAccounts' }))[0]
-            document.getElementById('test').textContent = '2';
+            document.getElementById('test').textContent = '2'
 
-            let response = await fetch('http://solution-web/graphql', {
-                method: 'POST',
+            let response = await fetch("http://solution-web/graphql", {
                 headers: {
-                    'Content-Type': 'application/json',
+                    "content-type": "application/json",
                 },
-                body: JSON.stringify({
-                    query: `
-                    mutation {
-                        message: requestAuthentication (
-                            address: "` + address + `"
-                        )
-                    }`
-                }),
+                method: "POST",
+                body: `{"query":"mutation {message: requestAuthentication(address: \\"` + address + `\\")}","variables":null}`
             })
 
-            document.getElementById('test').textContent = '3';
+            document.getElementById('test').textContent = '3'
 
             const message = (await response.json()).data.message
-            
-            document.getElementById('test').textContent = message;
+
+            document.getElementById('test').textContent = message
 
             const signature = await ethereum.request({ method: 'personal_sign', params: [ message, address ] })
 
