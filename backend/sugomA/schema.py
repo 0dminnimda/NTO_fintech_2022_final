@@ -253,7 +253,7 @@ def resolve_edit_room(_, info, id, room):
 
 
 @mutation.field("setRoomContractAddress")
-def resolve_set_room_contract_address(_, info, id, contractAddress):
+def resolve_set_room_contract_address(_, info, id, contractAddress=None):
     print("setRoomContractAddress", id, contractAddress)
 
     require_authentication()
