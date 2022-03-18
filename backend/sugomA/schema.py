@@ -3,6 +3,7 @@ import os
 import secrets
 import time
 import uuid
+from copy import copy
 
 from ariadne import (MutationType, ObjectType, QueryType, gql,
                      make_executable_schema)
@@ -290,6 +291,18 @@ def resolve_set_room_contract_address(_, info, id, contractAddress=None):
     room.save()
 
     return room
+
+
+# setRoomPublicName(id: ID!, publicName: String): Room!
+
+@mutation.field("removeRoom")
+def resolve_remove_room(_, info, id):
+    print("setRoomContractAddress", id)
+    room = get_existing_room(id)
+
+    room_copy = copy(room)
+    room.delete()
+    return room_copy
 
 
 schema = make_executable_schema(
