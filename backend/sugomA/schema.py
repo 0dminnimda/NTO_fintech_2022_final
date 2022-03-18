@@ -243,9 +243,9 @@ def resolve_create_room(_, info, room):
 def resolve_edit_room(_, info, id, room):
     print("editRoom", id, room)
 
+    db_room = get_existing_room(id)
     require_authentication()
     require_landlord(Authentication.objects.get(address=code_smell["address"]))
-    db_room = get_existing_room(id)
     validate_room(room)
 
     for name, value in room.items():
