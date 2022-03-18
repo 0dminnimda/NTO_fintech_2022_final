@@ -129,10 +129,29 @@ def resolve_authentication(_, info):
     return Authentication.objects.get(address=code_smell["address"])
 
 
+# rooms: [Room!]!
+
+
+def get_existing_room(id):
+    try:
+        uid = uuid.UUID(id)
+    except ValueError:
+        print("get_existing_room failure", id)
+        raise RoomNotFound
+
+    rooms = Room.objects.filter(id=uid)
+    if len(rooms) == 0:
+        print("get_existing_room failure", id, uid, rooms)
+        raise RoomNotFound
+
+    assert len(rooms) == 1
+    return rooms[0]
+
+
 @query.field("room")
 def resolve_room(_, info, id):
     print("room", id)
-    return Room.objects.get(id=id)
+    return get_existing_room(id)
 
 
 mutation = MutationType()
@@ -215,22 +234,6 @@ def resolve_create_room(_, info, room):
     # each room have unique id, so no worries about multiple instances
     return Room.objects.create(internalName=room["internalName"],
                                area=room["area"], location=room["location"])
-
-
-def get_existing_room(id):
-    try:
-        uid = uuid.UUID(id)
-    except ValueError:
-        print("get_existing_room failure", id)
-        raise RoomNotFound
-
-    rooms = Room.objects.filter(id=uid)
-    if len(rooms) == 0:
-        print("get_existing_room failure", id, uid, rooms)
-        raise RoomNotFound
-
-    assert len(rooms) == 1
-    return rooms[0]
 
 
 @mutation.field("editRoom")
