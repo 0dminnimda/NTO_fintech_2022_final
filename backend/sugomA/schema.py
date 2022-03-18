@@ -321,8 +321,9 @@ def is_room_rented(room):
     assert RPC_URL is not None
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
 
+    me = code_smell["address"]
     counter = w3.eth.contract(address=room.contractAddress, abi=ABI)
-    rent_end_time = counter.functions.getRentEndTime().call()
+    rent_end_time = counter.functions.getRentEndTime().call({"from": me})
     if time() < rent_end_time:
         print("is_room_rented failure", time(), ">=", rent_end_time)
         raise RemovingRentedRoom
