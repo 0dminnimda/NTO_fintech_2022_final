@@ -313,6 +313,7 @@ def reset_set_room_public_name(_, info, id, publicName=None):
     room.publicName = publicName
     room.save()
 
+    return room
 
 
 def is_room_rented(room):
