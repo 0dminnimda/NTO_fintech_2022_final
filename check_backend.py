@@ -25,16 +25,13 @@ def poster(session, data):
     return resp.json(), resp.text
 
 
-def asserter(data, need, res, text=None):
+def asserter(data, need, res):
     assert res == need, f"{data!r}\n -> {res!r}\n != {need!r}"
-
-    if text is None:
-        text = res
-    print(f"{data!r} -> {text!r}")
+    print(f"{data!r} -> {res!r}")
 
 
 def test2():
-    isLandlord = False
+    # isLandlord = True
     session = requests.Session()
 
     data = 'query{authentication{address,isLandlord}}'
@@ -42,7 +39,12 @@ def test2():
     son, text = poster(session, data)
     asserter(data, need, text)
 
-    data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'
+    data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
+    need = '{"errors": [{"message": "Authentication required"}]}'
+    son, text = poster(session, data)
+    asserter(data, need, text)
+
+    data = 'mutation {setRoomContractAddress(id: "<room-id>", contractAddress: "<contract-address>") {id, contractAddress}}'  # noqa
     need = '{"errors": [{"message": "Authentication required"}]}'
     son, text = poster(session, data)
     asserter(data, need, text)
@@ -53,14 +55,15 @@ def test2():
     son, text = poster(session, data)
     message = son["data"]["message"]
 
-    if isLandlord:
-        os.environ["LANDLORD_ADDRESS"] = acc.address
+    # if isLandlord:
+    #     os.environ["LANDLORD_ADDRESS"] = acc.address
 
     sig = Account.sign_message(encode_defunct(text=message), private_key)
     vrs = list(map(hex, (sig.v, sig.r, sig.s)))
     data = 'mutation {authentication: authenticate(address: "' + acc.address + '" signedMessage: {v: "' + vrs[0] + '" r: "' + vrs[1] + '" s: "' + vrs[2] + '"}) {address isLandlord}}'  # noqa
-    need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": ' + json.dumps(isLandlord) + '}}}'  # noqa
     son, text = poster(session, data)
+    isLandlord = son["data"]["authentication"]["isLandlord"]
+    need = '{"data": {"authentication": {"address": "' + acc.address + '", "isLandlord": ' + json.dumps(isLandlord) + '}}}'  # noqa
     asserter(data, need, text)
 
     data = 'query{authentication{address,isLandlord}}'
@@ -69,38 +72,52 @@ def test2():
     asserter(data, need, text)
 
     data = 'mutation {createRoom(room: {internalName: "some-name", area: 100.5, location: "some location"}) {id, internalName, area, location}}'  # noqa
-    need = {"data": {"createRoom": {"internalName": "some-name", "area": 100.5, "location": "some location"}}}  # noqa
-    son, text = poster(session, data)
-    room_id = son["data"]["createRoom"].pop("id")
-    asserter(data, need, son, text)
+    if isLandlord:
+        son, text = poster(session, data)
+        room_id = son["data"]["createRoom"]["id"]
+        need = '{"data": {"createRoom": {"id": "' + room_id + '", "internalName": "some-name", "area": 100.5, "location": "some location"}}}'  # noqa
+        asserter(data, need, text)
 
-    data = 'query {room(id: "' + room_id + '") {id, internalName, area, location}}'  # noqa
-    need = '{"data": {"room": {"id": "' + room_id + '", "internalName": "some-name", "area": 100.5, "location": "some location"}}}'  # noqa
-    son, text = poster(session, data)
-    asserter(data, need, text)
+        data = 'query {room(id: "' + room_id + '") {id, internalName, area, location}}'  # noqa
+        need = '{"data": {"room": {"id": "' + room_id + '", "internalName": "some-name", "area": 100.5, "location": "some location"}}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
 
-    # need = '{"data": null,"errors": [{ "message": "This method is available only for the landlord" }]}'  # noqa
+        data = 'mutation {createRoom(room: {internalName: "some-name", area: -1, location: "some location"}) {id, internalName, area, location}}'  # noqa
+        need = '{"errors": [{"message": "The room area must be greater than zero"}]}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
 
-    data = 'mutation {createRoom(room: {internalName: "some-name", area: -1, location: "some location"}) {id, internalName, area, location}}'  # noqa
-    need = '{"errors": [{"message": "The room area must be greater than zero"}]}'  # noqa
-    son, text = poster(session, data)
-    asserter(data, need, text)
-
-    data = 'mutation {createRoom(room: {internalName: "some-name", area: 0, location: "some location"}) {id, internalName, area, location}}'  # noqa
-    need = need
-    son, text = poster(session, data)
-    asserter(data, need, text)
+        data = 'mutation {createRoom(room: {internalName: "some-name", area: 0, location: "some location"}) {id, internalName, area, location}}'  # noqa
+        need = need
+        son, text = poster(session, data)
+        asserter(data, need, text)
+    else:
+        need = '{"errors": [{"message": "This method is available only for the landlord"}]}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
 
     contract_address = "0x" + secrets.token_hex(32)
-    data = 'mutation {setRoomContractAddress(id: "' + room_id + '", contractAddress: "' + contract_address + '") {id, contractAddress}}'  # noqa
-    need = '{"data": {"setRoomContractAddress": {"id": "' + room_id + '", "contractAddress": "' + contract_address + '"}}}'  # noqa
-    son, text = poster(session, data)
-    asserter(data, need, text)
+    if isLandlord:
+        data = 'mutation {setRoomContractAddress(id: "' + room_id + '", contractAddress: "' + contract_address + '") {id, contractAddress}}'  # noqa
+        need = '{"data": {"setRoomContractAddress": {"id": "' + room_id + '", "contractAddress": "' + contract_address + '"}}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
 
-    data = 'query {room(id: "' + room_id + '") {id, contractAddress}}'
-    need = '{"data": {"room": {"id": "' + room_id + '", "contractAddress": "' + contract_address + '"}}}'  # noqa
-    son, text = poster(session, data)
-    asserter(data, need, text)
+        data = 'query {room(id: "' + room_id + '") {id, contractAddress}}'
+        need = '{"data": {"room": {"id": "' + room_id + '", "contractAddress": "' + contract_address + '"}}}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
+
+        data = 'mutation {setRoomContractAddress(id: "<nonexisting-room-id>", contractAddress: "<contract-address>") {id, contractAddress}}'
+        need = '{"errors": [{"message": "Room with such ID not found"}]}'
+        son, text = poster(session, data)
+        asserter(data, need, text)
+    else:
+        data = 'mutation {setRoomContractAddress(id: "<room-id>", contractAddress: "' + contract_address + '") {id, contractAddress}}'  # noqa
+        need = '{"errors": [{"message": "This method is available only for the landlord"}]}'  # noqa
+        son, text = poster(session, data)
+        asserter(data, need, text)
 
 
 test_check()
