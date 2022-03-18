@@ -17,13 +17,15 @@ contract RentalAgreement {
     uint256 rentEndTime_;
     uint256 currentProfit_ = 0;
     uint256 currentBillingPeriod_ = 0;
+    uint256 totalLandlordWithdrawals_ = 0;
 
-    address landLord_;
-    address tenant_;
+    address payable landLord_;
+    address payable tenant_;
 
     bytes32 private DOMAIN_SEPARATOR;
     bytes32 private constant PERMIT_TYPEHASH = keccak256("RentalPermit(uint256 deadline,address tenant,uint256 rentalRate,uint256 billingPeriodDuration,uint256 billingsCount)");
     bytes32 private constant TICKET_TYPEHASH = keccak256("Ticket(uint256 deadline,uint256 nonce,uint256 value)");
+    bytes32 private constant END_TYPEHASH = keccak256("EndConsent(uint256 deadline)");
 
     address[] private cashiers;
     mapping(address => uint256) private cashierNonce;
@@ -32,7 +34,7 @@ contract RentalAgreement {
     event PurchasePayment(uint256 amount);
 
     constructor (uint256 roomInternalId) {
-        landLord_ = msg.sender;
+        landLord_ = payable(msg.sender);
         roomInternalId_ = roomInternalId;
         DOMAIN_SEPARATOR = keccak256(abi.encode(
             keccak256("EIP712Domain(string name,string version,address verifyingContract)"),
@@ -42,7 +44,7 @@ contract RentalAgreement {
         ));
     }
 
-    function rent (uint256 deadline, address tenant, uint256 rentalRate, uint256 billingPeriodDuration, uint256 billingsCount, Sign calldata landlordSign) payable public {
+    function rent (uint256 deadline, address payable tenant, uint256 rentalRate, uint256 billingPeriodDuration, uint256 billingsCount, Sign calldata landlordSign) payable public {
         if (tenant_ != address(0)) revert("The contract is being in not allowed state");
 
         bytes32 digest = keccak256(abi.encodePacked(
@@ -138,6 +140,78 @@ contract RentalAgreement {
         cashierNonce[cashier] += 1;
         currentProfit_ += msg.value;
         emit PurchasePayment(value);
+    }
+
+    function getTenantProfit () view public returns (uint256) {
+        uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
+        if (newBillingPeriod >= billingsCount_) newBillingPeriod = billingsCount_ - 1;
+
+        if (newBillingPeriod == billingsCount_ - 1 || currentBillingPeriod_ < newBillingPeriod) return address(this).balance - getLandlordProfit();
+        if (currentProfit_ < rentalRate_) return address(this).balance - getLandlordProfit() - currentProfit_;
+        return address(this).balance - getLandlordProfit() - rentalRate_;
+    }
+
+    function withdrawTenantProfit () public {
+        uint256 profit = getTenantProfit();
+        if (profit > 0) tenant_.transfer(profit);
+    }
+
+    function getLandlordProfit () view public returns (uint256)  {
+        uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
+        if (newBillingPeriod >= billingsCount_) newBillingPeriod = billingsCount_ - 1;
+
+        if (currentBillingPeriod_ == newBillingPeriod || (newBillingPeriod - currentBillingPeriod_ == 1 && currentProfit_ >= rentalRate_)) return (newBillingPeriod + 1) * rentalRate_ - totalLandlordWithdrawals_;
+        return (currentBillingPeriod_ + 1) * rentalRate_ + currentProfit_ - totalLandlordWithdrawals_;
+
+    }
+
+    function withdrawLandlordProfit () public {
+        uint256 profit = getLandlordProfit();
+        if (profit > 0) {
+            landLord_.transfer(profit);
+            totalLandlordWithdrawals_ += profit;
+        }
+    }
+
+    function endAgreement () public {
+        if (tenant_ == address(0)) revert("The contract is being in not allowed state");
+
+        if (block.timestamp >= rentEndTime_) {
+            withdrawLandlordProfit();
+            selfdestruct(tenant_);
+        }
+        else {
+            uint256 newBillingPeriod = (block.timestamp - rentStartTime_) / billingPeriodDuration_;
+            if (currentBillingPeriod_ == newBillingPeriod || (newBillingPeriod - currentBillingPeriod_ == 1 && currentProfit_ >= rentalRate_)) revert("The contract is being in not allowed state");
+            else {
+                withdrawTenantProfit();
+                selfdestruct(landLord_);
+            }
+        }
+    }
+
+    function endAgreementManually (uint256 deadline, Sign calldata landlordSign, Sign calldata tenantSign) public {
+        if (tenant_ == address(0)) revert("The contract is being in not allowed state");
+        if (deadline < block.timestamp) revert("The operation is outdated");
+
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            keccak256(abi.encode(END_TYPEHASH, deadline))
+        ));
+        address landlord = ecrecover(digest, landlordSign.v, landlordSign.r, landlordSign.s);
+        if (landlord != landLord_) revert("Invalid landlord sign");
+
+        digest = keccak256(abi.encodePacked(
+            "\x19\x01",
+            DOMAIN_SEPARATOR,
+            keccak256(abi.encode(END_TYPEHASH, deadline))
+        ));
+        address tenant = ecrecover(digest, tenantSign.v, tenantSign.r, tenantSign.s);
+        if (tenant != tenant_) revert("Invalid tenant sign");
+
+        withdrawLandlordProfit();
+        selfdestruct(tenant_);
     }
 
     function getRoomInternalId () view public returns (uint) { return roomInternalId_; }

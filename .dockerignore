@@ -5,3 +5,4 @@ Dockerfile
 .dockerignore
 .env*
 you_know_the_rules.txt
+test_backend.py
