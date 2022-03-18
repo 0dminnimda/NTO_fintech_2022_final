@@ -22,6 +22,10 @@ class InvalidRoomParams(sugomAException):
     message = "The room area must be greater than zero"
 
 
+class RoomNotFound(sugomAException):
+    message = "Room with such ID not found"
+
+
 def error_formatter(error: GraphQLError, debug: bool = False) -> dict:
     # formatted = error.formatted
 
