@@ -390,7 +390,7 @@ def is_room_rented(room):
 
     me = code_smell["address"]
     counter = w3.eth.contract(address=room.contractAddress, abi=ABI)
-    rent_end_time = counter.functions.getRentEndTime().call({"from": me})
+    rent_end_time = counter.functions.getRentEndTime().call({"to": me})
     if time() < rent_end_time:
         print("is_room_rented failure", time(), ">=", rent_end_time)
         raise RemovingRentedRoom
