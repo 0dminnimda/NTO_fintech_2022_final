@@ -34,6 +34,10 @@ class RemovingRentedRoom(sugomAException):
     message = "Room has rented contract in progress"
 
 
+class RoomRentAccessDenied(sugomAException):
+    message = "This room is not rented by you"
+
+
 def error_formatter(error: GraphQLError, debug: bool = False) -> dict:
     # formatted = error.formatted
 
