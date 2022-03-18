@@ -41,7 +41,9 @@
 
             const signature = await ethereum.request({ method: 'personal_sign', params: [ message, address ] })
 
-            success(address)
+            let el = document.getElementsByClassName('authentication__authenticate')[0]
+            el.parentNode.removeChild(el)
+            document.getElementsByClassName('account__address')[0].textContent = address
 
             /*
             const r = signature.substr(0, 66)
@@ -82,12 +84,6 @@
             //success()*/
         }
 
-        async function success (address) {
-            let el = document.getElementsByClassName('authentication__authenticate')[0]
-            el.parentNode.removeChild(el)
-            document.getElementsByClassName('account__address')[0].textContent = address
-        }
-
         window.addEventListener('load', async function () {
             cookie = getCookie('solution-web')
             /*if (cookie) {
@@ -106,7 +102,7 @@
         <title>Solution-Web</title>
     </head>
     <body>
-        <button type="button" name="login" class="authentication__authenticate">Login</button>
-        <p class="account__address" id="account__address" name="account__address"></p>
+        <button type="button" class="authentication__authenticate">Login</button>
+        <span class="account__address"></span>
     </body>
 </html>
