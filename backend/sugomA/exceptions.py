@@ -30,6 +30,10 @@ class ContractNotFound(sugomAException):
     message = "Contract with such address not found"
 
 
+class RemovingRentedRoom(sugomAException):
+    message = "Room has rented contract in progress"
+
+
 def error_formatter(error: GraphQLError, debug: bool = False) -> dict:
     # formatted = error.formatted
 
