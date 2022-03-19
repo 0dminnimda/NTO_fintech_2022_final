@@ -1,0 +1,306 @@
+[0KRunning with gitlab-runner 14.8.2 (c6e7e194)[0;m
+[0K  on potato-2 s-jAsQCu[0;m
+section_start:1647611555:prepare_executor[0K[0K[36;1mPreparing the "docker" executor[0;m[0;m
+[0KUsing Docker executor with image docker:latest ...[0;m
+[0KStarting service docker:dind ...[0;m
+[0KUsing locally found image version due to "if-not-present" pull policy[0;m
+[0KUsing docker image sha256:c05a8c965912fe35df9cce58ddb7aed725fb34d81772761a4ef7a373fd3271c1 for docker:dind with digest docker@sha256:41bd636ca74163b65972d707fc43f6b955d9cc87d7fffaef76475b8a2eb9c323 ...[0;m
+[0KWaiting for services to be up and running...[0;m
+
+[0;33m*** WARNING:[0;m Service runner-s-jasqcu-project-34434280-concurrent-0-51e5f1591b28b863-docker-0 probably didn't start properly.
+
+Health check error:
+service "runner-s-jasqcu-project-34434280-concurrent-0-51e5f1591b28b863-docker-0-wait-for-service" timeout
+
+Health check container logs:
+
+
+Service container logs:
+2022-03-18T13:52:36.312735807Z Generating RSA private key, 4096 bit long modulus (2 primes)
+2022-03-18T13:52:36.574975497Z .........................................................++++
+2022-03-18T13:52:36.642416832Z ................++++
+2022-03-18T13:52:36.642977315Z e is 65537 (0x010001)
+2022-03-18T13:52:36.654480143Z Generating RSA private key, 4096 bit long modulus (2 primes)
+2022-03-18T13:52:37.049247680Z ..........................................................................................................................++++
+2022-03-18T13:52:37.104972363Z ................++++
+2022-03-18T13:52:37.105415869Z e is 65537 (0x010001)
+2022-03-18T13:52:37.126174615Z Signature ok
+2022-03-18T13:52:37.126189433Z subject=CN = docker:dind server
+2022-03-18T13:52:37.126326845Z Getting CA Private Key
+2022-03-18T13:52:37.134959894Z /certs/server/cert.pem: OK
+2022-03-18T13:52:37.137599521Z Generating RSA private key, 4096 bit long modulus (2 primes)
+2022-03-18T13:52:37.202523208Z ...................++++
+2022-03-18T13:52:37.252260568Z ..............++++
+2022-03-18T13:52:37.252734671Z e is 65537 (0x010001)
+2022-03-18T13:52:37.270248149Z Signature ok
+2022-03-18T13:52:37.270259479Z subject=CN = docker:dind client
+2022-03-18T13:52:37.270469778Z Getting CA Private Key
+2022-03-18T13:52:37.279048245Z /certs/client/cert.pem: OK
+2022-03-18T13:52:37.308983993Z ip: can't find device 'ip_tables'
+2022-03-18T13:52:37.309807800Z ip_tables              32768  2 iptable_filter,iptable_nat
+2022-03-18T13:52:37.309817742Z x_tables               45056  7 xt_nat,xt_tcpudp,xt_conntrack,xt_MASQUERADE,xt_addrtype,iptable_filter,ip_tables
+2022-03-18T13:52:37.310150588Z modprobe: can't change directory to '/lib/modules': No such file or directory
+2022-03-18T13:52:37.311681182Z mount: permission denied (are you root?)
+2022-03-18T13:52:37.311742192Z Could not mount /sys/kernel/security.
+2022-03-18T13:52:37.311749977Z AppArmor detection and --privileged mode might break.
+2022-03-18T13:52:37.312605307Z mount: permission denied (are you root?)
+
+[0;33m*********[0;m
+
+[0KUsing locally found image version due to "if-not-present" pull policy[0;m
+[0KUsing docker image sha256:6816f070b2395d750ce78e4fbdb7e9df0af63b7686f3063c09e008c2ef1a0036 for docker:latest with digest docker@sha256:9e13118c8f7b17349e2d350806082fdda135ebf2923376821f3eac23559b9141 ...[0;m
+section_end:1647611587:prepare_executor[0Ksection_start:1647611587:prepare_script[0K[0K[36;1mPreparing environment[0;m[0;m
+Running on runner-s-jasqcu-project-34434280-concurrent-0 via user-HP-250-G7-Notebook-PC...
+section_end:1647611588:prepare_script[0Ksection_start:1647611588:get_sources[0K[0K[36;1mGetting source from Git repository[0;m[0;m
+[32;1mFetching changes with git depth set to 1...[0;m
+Initialized empty Git repository in /builds/s-jAsQCu/0/onti-fintech/onti-2022-fintech/fintech2022009/mall/.git/
+[32;1mCreated fresh repository.[0;m
+[32;1mChecking out 0b60aa0f as develop...[0;m
+
+[32;1mUpdating/initializing submodules recursively with git depth set to 1...[0;m
+section_end:1647611590:get_sources[0Ksection_start:1647611590:step_script[0K[0K[36;1mExecuting "step_script" stage of the job script[0;m[0;m
+[0KUsing docker image sha256:6816f070b2395d750ce78e4fbdb7e9df0af63b7686f3063c09e008c2ef1a0036 for docker:latest with digest docker@sha256:9e13118c8f7b17349e2d350806082fdda135ebf2923376821f3eac23559b9141 ...[0;m
+[32;1m$ apk add --no-cache docker-compose curl openssh-client sshpass[0;m
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.15/main/x86_64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.15/community/x86_64/APKINDEX.tar.gz
+(1/53) Installing brotli-libs (1.0.9-r5)
+(2/53) Installing nghttp2-libs (1.46.0-r0)
+(3/53) Installing libcurl (7.80.0-r0)
+(4/53) Installing curl (7.80.0-r0)
+(5/53) Installing libbz2 (1.0.8-r1)
+(6/53) Installing expat (2.4.7-r0)
+(7/53) Installing libffi (3.4.2-r1)
+(8/53) Installing gdbm (1.22-r0)
+(9/53) Installing xz-libs (5.2.5-r0)
+(10/53) Installing libgcc (10.3.1_git20211027-r0)
+(11/53) Installing libstdc++ (10.3.1_git20211027-r0)
+(12/53) Installing mpdecimal (2.5.1-r1)
+(13/53) Installing readline (8.1.1-r0)
+(14/53) Installing sqlite-libs (3.36.0-r0)
+(15/53) Installing python3 (3.9.7-r4)
+(16/53) Installing py3-ordered-set (4.0.2-r2)
+(17/53) Installing py3-appdirs (1.4.4-r2)
+(18/53) Installing py3-parsing (2.4.7-r2)
+(19/53) Installing py3-six (1.16.0-r0)
+(20/53) Installing py3-packaging (20.9-r1)
+(21/53) Installing py3-setuptools (52.0.0-r4)
+(22/53) Installing py3-cached-property (1.5.2-r1)
+(23/53) Installing py3-certifi (2020.12.5-r1)
+(24/53) Installing py3-chardet (4.0.0-r2)
+(25/53) Installing py3-distro (1.6.0-r0)
+(26/53) Installing dockerpy-creds (0.4.0-r2)
+(27/53) Installing py3-cparser (2.20-r1)
+(28/53) Installing py3-cffi (1.14.5-r2)
+(29/53) Installing py3-idna (3.3-r0)
+(30/53) Installing py3-asn1crypto (1.4.0-r1)
+(31/53) Installing py3-cryptography (3.3.2-r3)
+(32/53) Installing py3-ipaddress (1.0.23-r2)
+(33/53) Installing py3-charset-normalizer (2.0.7-r0)
+(34/53) Installing py3-urllib3 (1.26.7-r0)
+(35/53) Installing py3-requests (2.26.0-r1)
+(36/53) Installing py3-websocket-client (1.2.1-r2)
+(37/53) Installing docker-py (5.0.3-r0)
+(38/53) Installing py3-dockerpty (0.4.1-r3)
+(39/53) Installing py3-docopt (0.6.2-r6)
+(40/53) Installing py3-pyrsistent (0.18.0-r0)
+(41/53) Installing py3-attrs (21.2.0-r0)
+(42/53) Installing py3-jsonschema (4.2.1-r0)
+(43/53) Installing py3-asn1 (0.4.8-r1)
+(44/53) Installing py3-bcrypt (3.2.0-r4)
+(45/53) Installing py3-pynacl (1.4.0-r2)
+(46/53) Installing py3-paramiko (2.7.2-r1)
+(47/53) Installing py3-pysocks (1.7.1-r2)
+(48/53) Installing py3-dotenv (0.19.2-r0)
+(49/53) Installing yaml (0.2.5-r0)
+(50/53) Installing py3-yaml (5.4.1.1-r1)
+(51/53) Installing py3-texttable (1.6.4-r0)
+(52/53) Installing docker-compose (1.29.2-r1)
+(53/53) Installing sshpass (1.09-r0)
+Executing busybox-1.34.1-r3.trigger
+OK: 85 MiB in 75 packages
+[32;1m$ DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}[0;m
+[32;1m$ mkdir -p $DOCKER_CONFIG/cli-plugins[0;m
+[32;1m$ curl -SL https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose[0;m
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   664  100   664    0     0   3085      0 --:--:-- --:--:-- --:--:--  3088
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 11 23.5M   11 2815k    0     0  2150k      0  0:00:11  0:00:01  0:00:10 2815k 18 23.5M   18 4487k    0     0  1943k      0  0:00:12  0:00:02  0:00:10 2244k 24 23.5M   24 5847k    0     0  1767k      0  0:00:13  0:00:03  0:00:10 1950k 27 23.5M   27 6711k    0     0  1555k      0  0:00:15  0:00:04  0:00:11 1676k 30 23.5M   30 7263k    0     0  1368k      0  0:00:17  0:00:05  0:00:12 1453k 32 23.5M   32 7870k    0     0  1247k      0  0:00:19  0:00:06  0:00:13 1011k 35 23.5M   35 8469k    0     0  1158k      0  0:00:20  0:00:07  0:00:13  796k 36 23.5M   36 8849k    0     0  1065k      0  0:00:22  0:00:08  0:00:14  600k 38 23.5M   38 9222k    0     0   990k      0  0:00:24  0:00:09  0:00:15  502k 39 23.5M   39 9622k    0     0   933k      0  0:00:25  0:00:10  0:00:15  471k 42 23.5M   42 10.0M    0     0   905k      0  0:00:26  0:00:11  0:00:15  473k 45 23.5M   45 10.7M    0     0   898k      0  0:00:26  0:00:12  0:00:14  517k 49 23.5M   49 11.7M    0     0   902k      0  0:00:26  0:00:13  0:00:13  631k 54 23.5M   54 12.9M    0     0   926k      0  0:00:26  0:00:14  0:00:12  806k 61 23.5M   61 14.3M    0     0   962k      0  0:00:25  0:00:15  0:00:10 1020k 64 23.5M   64 15.1M    0     0   948k      0  0:00:25  0:00:16  0:00:09 1044k 67 23.5M   67 15.9M    0     0   944k      0  0:00:25  0:00:17  0:00:08 1059k 72 23.5M   72 17.0M    0     0   950k      0  0:00:25  0:00:18  0:00:07 1079k 75 23.5M   75 17.7M    0     0   940k      0  0:00:25  0:00:19  0:00:06  978k 77 23.5M   77 18.2M    0     0   918k      0  0:00:26  0:00:20  0:00:06  783k 79 23.5M   79 18.6M    0     0   897k      0  0:00:26  0:00:21  0:00:05  730k 82 23.5M   82 19.3M    0     0   888k      0  0:00:27  0:00:22  0:00:05  693k 86 23.5M   86 20.2M    0     0   891k      0  0:00:27  0:00:23  0:00:04  674k 90 23.5M   90 21.2M    0     0   893k      0  0:00:26  0:00:24  0:00:02  715k 94 23.5M   94 22.2M    0     0   901k      0  0:00:26  0:00:25  0:00:01  835k100 23.5M  100 23.5M    0     0   918k      0  0:00:26  0:00:26 --:--:-- 1011k
+[32;1m$ chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose[0;m
+[32;1m$ mkdir checker-logs/[0;m
+[32;1m$ rm .env.solution || true[0;m
+rm: can't remove '.env.solution': No such file or directory
+[32;1m$ echo "LANDLORD_ADDRESS=0xb33c27691A5441351152d9c35e91cf6b32f97e05" >> .env.solution[0;m
+[32;1m$ echo "RPC_URL=http://ganache:8545" >> .env.solution[0;m
+[32;1m$ copy_container_id=$(docker create $BACKEND_CHECKER_IMAGE)[0;m
+[32;1m$ docker cp $copy_container_id:/checker/docker-compose.yaml $BACKEND_DOCKER_COMPOSE[0;m
+[32;1m$ docker rm -v $copy_container_id[0;m
+30cd12632c9931d9a907b79a5ae24abf280da75b0f82e24f1779f388a3403366
+[32;1m$ docker compose -f $BACKEND_DOCKER_COMPOSE down || true[0;m
+mall  Warning: No resource found to remove
+[32;1m$ docker compose -f $BACKEND_DOCKER_COMPOSE down || true[0;m
+mall  Warning: No resource found to remove
+[32;1m$ docker stop solution-backend || true[0;m
+Error response from daemon: No such container: solution-backend
+[32;1m$ docker stop solution-web || true[0;m
+Error response from daemon: No such container: solution-web
+[32;1m$ docker rm solution-backend || true[0;m
+Error: No such container: solution-backend
+[32;1m$ docker rm solution-web || true[0;m
+Error: No such container: solution-web
+[32;1m$ docker compose -f $SOLUTION_DOCKER_COMPOSE build[0;m
+Sending build context to Docker daemon  16.08kB
+Step 1/7 : FROM python:3
+ ---> 178dcaa62b39
+Step 2/7 : ENV PYTHONDONTWRITEBYTECODE=1
+ ---> Using cache
+ ---> 69227659ccf9
+Step 3/7 : ENV PYTHONUNBUFFERED=1
+ ---> Using cache
+ ---> 6b19dea16101
+Step 4/7 : RUN pip install -U pip
+ ---> Using cache
+ ---> 228d0dec68b3
+Step 5/7 : COPY requirements.txt /
+ ---> Using cache
+ ---> 0c61cc8534b4
+Step 6/7 : RUN pip install -r requirements.txt
+ ---> Using cache
+ ---> 926267fc74b7
+Step 7/7 : COPY . /
+ ---> d7f00bc063f8
+Successfully built d7f00bc063f8
+Successfully tagged mall_web:latest
+[32;1m$ docker compose -f $BACKEND_DOCKER_COMPOSE up --force-recreate[0;m
+Network backend-checker-network-0b60aa0fc80f198b2c9a9542a85cd9ad407a483f  Creating
+Network backend-checker-network-0b60aa0fc80f198b2c9a9542a85cd9ad407a483f  Created
+Container backend-checker  Creating
+Container backend-checker  Created
+Attaching to backend-checker
+backend-checker  | New compatible solc version available: 0.8.11
+backend-checker  | Compiling contracts...
+backend-checker  |   Solc version: 0.8.11
+backend-checker  |   Optimizer: Enabled  Runs: 200
+backend-checker  |   EVM Version: Istanbul
+backend-checker  | Generating build data...
+backend-checker  |  - RentalAgreement
+backend-checker  | 
+backend-checker  | 
+backend-checker  | Launching 'ganache-cli -h 0.0.0.0 --accounts 10 --hardfork istanbul --gasLimit 12000000 --mnemonic brownie --port 8546'...
+backend-checker  | ============================= test session starts ==============================
+backend-checker  | collected 39 items
+backend-checker  | 
+backend-checker  | iter1/test_US_101.py                                                                                 
+backend-checker  | US 101
+backend-checker  | [92m ✓ AC-101-01: Сборка и запуск приложения через docker-compose[0m
+backend-checker  | [92m ✓ AC-101-02: Проверка доступности сервера[0m
+backend-checker  |                                                                          [  5%]
+backend-checker  | iter1/test_US_102.py                                                                                 
+backend-checker  | US 102
+backend-checker  | [92m ✓ AC-102-01: Генерация сообщений для аутентификации[0m
+backend-checker  | [92m ✓ AC-102-02: Успешная аутентификация[0m
+backend-checker  | [92m ✓ AC-102-03: Неудачная аутентификация[0m
+backend-checker  |                                                                          [ 12%]
+backend-checker  | iter2/test_US_103.py                                                                                 
+backend-checker  | US 103
+backend-checker  | [92m ✓ AC-103-01: Нормальное создание помещения[0m
+backend-checker  | [92m ✓ AC-103-02: Валидация данных помещения при создании[0m
+backend-checker  | [92m ✓ AC-103-03: Проверка роли при создании помещения[0m
+backend-checker  |                                                                          [ 20%]
+backend-checker  | iter2/test_US_104.py                                                                                 
+backend-checker  | US 104
+backend-checker  | [92m ✓ AC-104-01: Нормальная установка адреса контракта для помещения[0m
+backend-checker  | [92m ✓ AC-104-02: Валидация ID помещения при установке адреса контракта[0m
+backend-checker  | [92m ✓ AC-104-03: Проверка роли при установке адреса контракта[0m
+backend-checker  | [92m ✓ AC-104-04: Редактирование адреса контракта помещения[0m
+backend-checker  | [92m ✓ AC-104-05: Удаление адреса контракта помещения[0m
+backend-checker  | [92m ✓ AC-104-06: Валидация адреса контракта при установке его для помещения[0m
+backend-checker  |                                                                          [ 35%]
+backend-checker  | iter2/test_US_105.py                                                                                 
+backend-checker  | US 105
+backend-checker  | [92m ✓ AC-105-01: Нормальное редактирование помещения[0m
+backend-checker  | [92m ✓ AC-105-02: Валидация ID помещения при редактировании[0m
+backend-checker  | [92m ✓ AC-105-03: Валидация данных помещения при редактировании[0m
+backend-checker  | [92m ✓ AC-105-04: Проверка роли при редактировании помещения[0m
+backend-checker  |                                                                          [ 46%]
+backend-checker  | iter2/test_US_106.py                                                                                 
+backend-checker  | US 106
+backend-checker  | [92m ✓ AC-106-01: Нормальное удаление помещения[0m
+backend-checker  | [91m ✗ AC-106-02: Валидация данных помещения при удалении[0m
+backend-checker  | [92m ✓ AC-106-03: Проверка роли при удалении помещения[0m
+backend-checker  |                                                                          [ 53%]
+backend-checker  | iter2/test_US_107.py                                                                                 
+backend-checker  | US 107
+backend-checker  | [93m » AC-107-01: Получение начального списка помещений[0m
+backend-checker  | [93m » AC-107-02: Получения списка после создания помещений[0m
+backend-checker  | [93m » AC-107-03: Получение списка после редактирования помещений[0m
+backend-checker  | [93m » AC-107-04: Получение списка после удаления помещений[0m
+backend-checker  |                                                                          [ 64%]
+backend-checker  | iter2/test_US_108.py                                                                                 
+backend-checker  | US 108
+backend-checker  | [93m » AC-108-01: Получение пустого списка помещений[0m
+backend-checker  | [93m » AC-108-02: Получение списка помещений после изменения его арендодателем[0m
+backend-checker  | [93m » AC-108-03: Получение списка после заключения договора об аренде[0m
+backend-checker  |                                                                          [ 71%]
+backend-checker  | iter2/test_US_109.py                                                                                 
+backend-checker  | US 109
+backend-checker  | [92m ✓ AC-109-01: Нормальная установка названия помещения[0m
+backend-checker  | [92m ✓ AC-109-02: Валидация ID помещения при установке названия[0m
+backend-checker  | [91m ✗ AC-109-03: Проверка факта аренды помещения при установке названия[0m
+backend-checker  | [92m ✓ AC-109-04: Сброс публичного названия помещения[0m
+backend-checker  | [92m ✓ AC-109-05: Редактирование публичного названия помещения[0m
+backend-checker  | [92m ✓ AC-109-06: Проверка роли при установке публичного названия[0m
+backend-checker  |                                                                          [ 87%]
+backend-checker  | iter3/test_US_110.py                                                                                 
+backend-checker  | US 110
+backend-checker  | [91m ✗ AC-110-01: Нормальное создание квитанции[0m
+backend-checker  | [93m » AC-110-02: Валидация данных при создании квитанции[0m
+backend-checker  | [93m » AC-110-03: Проверка роли при создании квитанции[0m
+backend-checker  | [93m » AC-110-04: Проверка факта аренды помещения при создании квитанции[0m
+backend-checker  |                                                                          [ 97%]
+backend-checker  | iter3/test_US_111.py                                                                                 
+backend-checker  | US 111
+backend-checker  | [93m » AC-111-01: Валидация ID при получении тикета на оплату[0m
+backend-checker  |                                                                          [100%]
+backend-checker  | 
+backend-checker  | =================================== FAILURES ===================================
+backend-checker  | ________________________________ test_AC_106_02 ________________________________
+backend-checker  | >> Point 2 failed, full report: https://vk.cc/c2KabY
+backend-checker  | ________________________________ test_AC_109_03 ________________________________
+backend-checker  | >> Point 1 failed, full report: https://vk.cc/cbPQX3
+backend-checker  | ________________________________ test_AC_110_01 ________________________________
+backend-checker  | >> Point 1 failed, full report: https://vk.cc/3A9NI7
+backend-checker  | ======================== 3 failed, 25 passed in 13.71s =========================
+backend-checker  | Terminating local RPC client...
+backend-checker exited with code 1
+[32;1m$ docker cp backend-checker:/checker/tests/logs ./checker-logs/backend[0;m
+[32;1m$ sshpass -p "$GITLAB_RUNNER_SERVER_1_PASSWORD" scp -o StrictHostKeyChecking=no ./checker-logs/backend/*.log $GITLAB_RUNNER_SERVER_1:/root/final-challenge-private-logs[0;m
+Warning: Permanently added '188.130.155.86' (RSA) to the list of known hosts.
+[32;1m$ export CHECKER_EXIT_CODE=$(docker inspect backend-checker --format='{{.State.ExitCode}}')[0;m
+[32;1m$ exit $(($CHECKER_EXIT_CODE));[0;m
+section_end:1647611648:step_script[0Ksection_start:1647611648:after_script[0K[0K[36;1mRunning after_script[0;m[0;m
+[32;1mRunning after script...[0;m
+[32;1m$ docker compose -f $BACKEND_DOCKER_COMPOSE down || true[0;m
+Container backend-checker  Stopping
+Container backend-checker  Stopping
+Container backend-checker  Stopped
+Container backend-checker  Removing
+Container backend-checker  Removed
+Network backend-checker-network-0b60aa0fc80f198b2c9a9542a85cd9ad407a483f  Removing
+Network backend-checker-network-0b60aa0fc80f198b2c9a9542a85cd9ad407a483f  Removed
+[32;1m$ docker compose -f $BACKEND_DOCKER_COMPOSE down || true[0;m
+mall  Warning: No resource found to remove
+[32;1m$ docker stop solution-backend || true[0;m
+Error response from daemon: No such container: solution-backend
+[32;1m$ docker stop solution-web || true[0;m
+Error response from daemon: No such container: solution-web
+[32;1m$ docker rm solution-backend || true[0;m
+Error: No such container: solution-backend
+[32;1m$ docker rm solution-web || true[0;m
+Error: No such container: solution-web
+section_end:1647611649:after_script[0Ksection_start:1647611649:upload_artifacts_on_failure[0K[0K[36;1mUploading artifacts for failed job[0;m[0;m
+[32;1mUploading artifacts...[0;m
+checker-logs/: found 3 matching files and directories[0;m 
+Uploading artifacts as "archive" to coordinator... 201 Created[0;m  id[0;m=2221529589 responseStatus[0;m=201 Created token[0;m=kZZjCGK_
+section_end:1647611651:upload_artifacts_on_failure[0Ksection_start:1647611651:cleanup_file_variables[0K[0K[36;1mCleaning up project directory and file based variables[0;m[0;m
+section_end:1647611652:cleanup_file_variables[0K[31;1mERROR: Job failed: exit code 1
+[0;m

@@ -1,0 +1,148 @@
+[0KRunning with gitlab-runner 14.8.2 (c6e7e194)[0;m
+[0K  on olympfintech-2 sFGoKNsR[0;m
+section_start:1647612635:prepare_executor[0K[0K[36;1mPreparing the "docker" executor[0;m[0;m
+[0KUsing Docker executor with image docker:latest ...[0;m
+[0KStarting service docker:dind ...[0;m
+[0KUsing locally found image version due to "if-not-present" pull policy[0;m
+[0KUsing docker image sha256:1a42336ff683d7dadd320ea6fe9d93a5b101474346302d23f96c9b4546cb414d for docker:dind with digest docker@sha256:6f2ae4a5fd85ccf85cdd829057a34ace894d25d544e5e4d9f2e7109297fedf8d ...[0;m
+[0KWaiting for services to be up and running...[0;m
+
+[0;33m*** WARNING:[0;m Service runner-sfgoknsr-project-34434280-concurrent-0-b3093c4c06167d48-docker-0 probably didn't start properly.
+
+Health check error:
+service "runner-sfgoknsr-project-34434280-concurrent-0-b3093c4c06167d48-docker-0-wait-for-service" timeout
+
+Health check container logs:
+
+
+Service container logs:
+2022-03-18T14:10:39.347346161Z Generating RSA private key, 4096 bit long modulus (2 primes)
+2022-03-18T14:10:40.059130334Z .......................................................................................................++++
+2022-03-18T14:10:40.296583791Z ...............................++++
+2022-03-18T14:10:40.297252389Z e is 65537 (0x010001)
+2022-03-18T14:10:40.320531226Z Generating RSA private key, 4096 bit long modulus (2 primes)
+2022-03-18T14:10:41.142641400Z ...............................................................................................................++++
+2022-03-18T14:10:42.816520864Z ............................................................................................................................................................................................................................................................++++
+2022-03-18T14:10:42.817209662Z e is 65537 (0x010001)
+2022-03-18T14:10:42.861109943Z Signature ok
+2022-03-18T14:10:42.861142643Z subject=CN = docker:dind server
+2022-03-18T14:10:42.861350342Z Getting CA Private Key
+2022-03-18T14:10:42.887800071Z /certs/server/cert.pem: OK
+2022-03-18T14:10:42.892219459Z Generating RSA private key, 4096 bit long modulus (2 primes)
+2022-03-18T14:10:43.388054814Z ..........................................................................++++
+2022-03-18T14:10:43.894761841Z ......................................................................++++
+2022-03-18T14:10:43.895448839Z e is 65537 (0x010001)
+2022-03-18T14:10:43.934783632Z Signature ok
+2022-03-18T14:10:43.934807232Z subject=CN = docker:dind client
+2022-03-18T14:10:43.935040931Z Getting CA Private Key
+2022-03-18T14:10:43.953539681Z /certs/client/cert.pem: OK
+2022-03-18T14:10:44.109520458Z ip: can't find device 'ip_tables'
+2022-03-18T14:10:44.110633655Z ip_tables              32768  2 iptable_filter,iptable_nat
+2022-03-18T14:10:44.110800655Z x_tables               45056  7 xt_nat,xt_tcpudp,xt_conntrack,xt_MASQUERADE,xt_addrtype,iptable_filter,ip_tables
+2022-03-18T14:10:44.111549553Z modprobe: can't change directory to '/lib/modules': No such file or directory
+2022-03-18T14:10:44.114940743Z mount: permission denied (are you root?)
+2022-03-18T14:10:44.115073543Z Could not mount /sys/kernel/security.
+2022-03-18T14:10:44.115112243Z AppArmor detection and --privileged mode might break.
+2022-03-18T14:10:44.116633739Z mount: permission denied (are you root?)
+
+[0;33m*********[0;m
+
+[0KUsing locally found image version due to "if-not-present" pull policy[0;m
+[0KUsing docker image sha256:15a9bc7c6340df2ac9d6c8196ca1d905180ddf2ca8b29a8d98f5422e2e5ccf85 for docker:latest with digest docker@sha256:a729cce205a05b0b86dc8dca87823efaffc3f74979fe7dc86a707c2fbf631b61 ...[0;m
+section_end:1647612673:prepare_executor[0Ksection_start:1647612673:prepare_script[0K[0K[36;1mPreparing environment[0;m[0;m
+Running on runner-sfgoknsr-project-34434280-concurrent-0 via olympfinteh2...
+section_end:1647612675:prepare_script[0Ksection_start:1647612675:get_sources[0K[0K[36;1mGetting source from Git repository[0;m[0;m
+[32;1mFetching changes with git depth set to 1...[0;m
+Initialized empty Git repository in /builds/sFGoKNsR/0/onti-fintech/onti-2022-fintech/fintech2022009/mall/.git/
+[32;1mCreated fresh repository.[0;m
+[32;1mChecking out 0b60aa0f as develop...[0;m
+
+[32;1mUpdating/initializing submodules recursively with git depth set to 1...[0;m
+section_end:1647612680:get_sources[0Ksection_start:1647612680:step_script[0K[0K[36;1mExecuting "step_script" stage of the job script[0;m[0;m
+[0KUsing docker image sha256:15a9bc7c6340df2ac9d6c8196ca1d905180ddf2ca8b29a8d98f5422e2e5ccf85 for docker:latest with digest docker@sha256:a729cce205a05b0b86dc8dca87823efaffc3f74979fe7dc86a707c2fbf631b61 ...[0;m
+[32;1m$ apk add openssh-client sshpass[0;m
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.15/main/x86_64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.15/community/x86_64/APKINDEX.tar.gz
+(1/1) Installing sshpass (1.09-r0)
+Executing busybox-1.34.1-r3.trigger
+OK: 11 MiB in 23 packages
+[32;1m$ docker run --name $BLOCKCHAIN_CHECKER_CONTAINER -v $BLOCKCHAIN_CONTRACTS_PATH:/checker/contracts/ $BLOCKCHAIN_IMAGE:$TAG || true[0;m
+New compatible solc version available: 0.8.11
+Compiling contracts...
+  Solc version: 0.8.11
+  Optimizer: Enabled  Runs: 200
+  EVM Version: Istanbul
+Generating build data...
+ - RentalAgreement
+
+Detailed log: b-1647612691.log
+
+============================= test session starts ==============================
+collected 20 items
+
+Launching 'ganache-cli --port 8545 --gasLimit 12000000 --accounts 10 --hardfork istanbul --mnemonic brownie'...
+
+test_US_001.py                                                                                 
+​
+[92m ✓ AC-001-01: Развёртывание контракта[0m
+                                                                         [  5%]
+test_US_002.py                                                                                 
+​
+[92m ✓ AC-002-01: Акт заключения сделки[0m
+[92m ✓ AC-002-02: Валидация параметров акта[0m
+                                                                         [ 15%]
+test_US_003.py                                                                                 
+​
+[92m ✓ AC-003-01: Добавление кассиров[0m
+[92m ✓ AC-003-02: Удаление кассиров[0m
+[92m ✓ AC-003-03: Получение списка кассиров[0m
+[92m ✓ AC-003-04: Получение списка кассиров после удаления[0m
+                                                                         [ 35%]
+test_US_004.py                                                                                 
+​
+[92m ✓ AC-004-01: Приём платежа[0m
+[92m ✓ AC-004-02: Валидация данных о платеже[0m
+[92m ✓ AC-004-03: Отклонение платежей по истечении срока действия контракта[0m
+[92m ✓ AC-004-04: Отклонение платежей при появлении задолженности[0m
+                                                                         [ 55%]
+test_US_005.py                                                                                 
+​
+[92m ✓ AC-005-01: Вывод средств арендатора[0m
+[92m ✓ AC-005-02: Вывод средств арендатора в последний расчетный период[0m
+[92m ✓ AC-005-03: Вывод средств арендатора с задолженностью[0m
+[92m ✓ AC-005-04: Вывод средств арендатора по истечении срока действия контракта[0m
+                                                                         [ 75%]
+test_US_006.py                                                                                 
+​
+[92m ✓ AC-006-01: Вывод средств арендодателя[0m
+[92m ✓ AC-006-02: Вывод средств арендодателя при появлении задолженности[0m
+                                                                         [ 85%]
+test_US_007.py                                                                                 
+​
+[92m ✓ AC-007-01: Удаление контракта по соглашению двух сторон[0m
+[91m ✗ AC-007-02: Удаление контракта при появлении задолженности[0m
+[92m ✓ AC-007-03: Удаление контракта по истечении срока действия соглашения[0m
+                                                                         [100%]
+
+=================================== FAILURES ===================================
+________________________________ test_AC_007_02 ________________________________
+\ 
+ >> Point 9 failed
+/
+=================== 1 failed, 19 passed in 99.92s (0:01:39) ====================
+Terminating local RPC client...
+[32;1m$ docker cp $BLOCKCHAIN_CHECKER_CONTAINER:/checker/tests/logs ./private-logs[0;m
+[32;1m$ export CHECKER_EXIT_CODE=$(docker inspect $BLOCKCHAIN_CHECKER_CONTAINER --format='{{.State.ExitCode}}')[0;m
+[32;1m$ docker rm $BLOCKCHAIN_CHECKER_CONTAINER[0;m
+blockchain-checker-0b60aa0fc80f198b2c9a9542a85cd9ad407a483f
+[32;1m$ ls -al ./private-logs[0;m
+total 16
+drwxr-xr-x    2 root     root          4096 Mar 18 14:11 .
+drwxrwxrwx    6 root     root          4096 Mar 18 14:13 ..
+-rw-r--r--    1 root     root          5175 Mar 18 14:13 b-1647612691.log
+[32;1m$ sshpass -p "$GITLAB_RUNNER_SERVER_1_PASSWORD" scp -o StrictHostKeyChecking=no ./private-logs/*.log $GITLAB_RUNNER_SERVER_1:/root/final-challenge-private-logs[0;m
+Warning: Permanently added '188.130.155.86' (RSA) to the list of known hosts.
+[32;1m$ exit $(($CHECKER_EXIT_CODE))[0;m
+section_end:1647612796:step_script[0Ksection_start:1647612796:cleanup_file_variables[0K[0K[36;1mCleaning up project directory and file based variables[0;m[0;m
+section_end:1647612799:cleanup_file_variables[0K[31;1mERROR: Job failed: exit code 1
+[0;m

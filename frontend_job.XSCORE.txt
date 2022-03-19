@@ -1,0 +1,258 @@
+[0KRunning with gitlab-runner 14.8.2 (c6e7e194)[0;m
+[0K  on potato-5 9-b5DjUz[0;m
+section_start:1647611565:prepare_executor[0K[0K[36;1mPreparing the "docker" executor[0;m[0;m
+[0KUsing Docker executor with image docker:latest ...[0;m
+[0KStarting service docker:dind ...[0;m
+[0KUsing locally found image version due to "if-not-present" pull policy[0;m
+[0KUsing docker image sha256:c05a8c965912fe35df9cce58ddb7aed725fb34d81772761a4ef7a373fd3271c1 for docker:dind with digest docker@sha256:ca2744235df40f184843b2cb9f0245a6b64ae65065aad30285e80d5a266fe0c2 ...[0;m
+[0KWaiting for services to be up and running...[0;m
+
+[0;33m*** WARNING:[0;m Service runner-9-b5djuz-project-34434280-concurrent-0-eda988f9b863228b-docker-0 probably didn't start properly.
+
+Health check error:
+service "runner-9-b5djuz-project-34434280-concurrent-0-eda988f9b863228b-docker-0-wait-for-service" timeout
+
+Health check container logs:
+
+
+Service container logs:
+2022-03-18T13:52:46.884500938Z Generating RSA private key, 4096 bit long modulus (2 primes)
+2022-03-18T13:52:46.996457309Z ...........................++++
+2022-03-18T13:52:47.144954248Z ......................................++++
+2022-03-18T13:52:47.145517032Z e is 65537 (0x010001)
+2022-03-18T13:52:47.158309227Z Generating RSA private key, 4096 bit long modulus (2 primes)
+2022-03-18T13:52:47.232311264Z .....................++++
+2022-03-18T13:52:47.421522991Z .........................................................++++
+2022-03-18T13:52:47.421981168Z e is 65537 (0x010001)
+2022-03-18T13:52:47.442839188Z Signature ok
+2022-03-18T13:52:47.442858875Z subject=CN = docker:dind server
+2022-03-18T13:52:47.443080402Z Getting CA Private Key
+2022-03-18T13:52:47.451812759Z /certs/server/cert.pem: OK
+2022-03-18T13:52:47.454339363Z Generating RSA private key, 4096 bit long modulus (2 primes)
+2022-03-18T13:52:48.314112659Z .................................................................................................................................................................................................................................................................................++++
+2022-03-18T13:52:48.785382786Z ...................................................................................................................................................++++
+2022-03-18T13:52:48.785776248Z e is 65537 (0x010001)
+2022-03-18T13:52:48.803571186Z Signature ok
+2022-03-18T13:52:48.803595007Z subject=CN = docker:dind client
+2022-03-18T13:52:48.803765828Z Getting CA Private Key
+2022-03-18T13:52:48.812337459Z /certs/client/cert.pem: OK
+2022-03-18T13:52:48.842025297Z ip: can't find device 'ip_tables'
+2022-03-18T13:52:48.842905352Z ip_tables              32768  2 iptable_filter,iptable_nat
+2022-03-18T13:52:48.842915217Z x_tables               45056  7 xt_nat,xt_tcpudp,xt_conntrack,xt_MASQUERADE,xt_addrtype,iptable_filter,ip_tables
+2022-03-18T13:52:48.843234314Z modprobe: can't change directory to '/lib/modules': No such file or directory
+2022-03-18T13:52:48.844947186Z mount: permission denied (are you root?)
+2022-03-18T13:52:48.844986538Z Could not mount /sys/kernel/security.
+2022-03-18T13:52:48.844990476Z AppArmor detection and --privileged mode might break.
+2022-03-18T13:52:48.845772914Z mount: permission denied (are you root?)
+
+[0;33m*********[0;m
+
+[0KUsing locally found image version due to "if-not-present" pull policy[0;m
+[0KUsing docker image sha256:6816f070b2395d750ce78e4fbdb7e9df0af63b7686f3063c09e008c2ef1a0036 for docker:latest with digest docker@sha256:72e87d4f1d2ed054bf9ec48c77dfc546c7e6173fe9b6afd9e80716b9c5ade4bb ...[0;m
+section_end:1647611598:prepare_executor[0Ksection_start:1647611598:prepare_script[0K[0K[36;1mPreparing environment[0;m[0;m
+Running on runner-9-b5djuz-project-34434280-concurrent-0 via user-HP-250-G7-Notebook-PC...
+section_end:1647611598:prepare_script[0Ksection_start:1647611599:get_sources[0K[0K[36;1mGetting source from Git repository[0;m[0;m
+[32;1mFetching changes with git depth set to 1...[0;m
+Initialized empty Git repository in /builds/9-b5DjUz/0/onti-fintech/onti-2022-fintech/fintech2022009/mall/.git/
+[32;1mCreated fresh repository.[0;m
+[32;1mChecking out 0b60aa0f as develop...[0;m
+
+[32;1mUpdating/initializing submodules recursively with git depth set to 1...[0;m
+section_end:1647611601:get_sources[0Ksection_start:1647611601:step_script[0K[0K[36;1mExecuting "step_script" stage of the job script[0;m[0;m
+[0KUsing docker image sha256:6816f070b2395d750ce78e4fbdb7e9df0af63b7686f3063c09e008c2ef1a0036 for docker:latest with digest docker@sha256:72e87d4f1d2ed054bf9ec48c77dfc546c7e6173fe9b6afd9e80716b9c5ade4bb ...[0;m
+[32;1m$ apk add --no-cache curl grep[0;m
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.15/main/x86_64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.15/community/x86_64/APKINDEX.tar.gz
+(1/6) Installing brotli-libs (1.0.9-r5)
+(2/6) Installing nghttp2-libs (1.46.0-r0)
+(3/6) Installing libcurl (7.80.0-r0)
+(4/6) Installing curl (7.80.0-r0)
+(5/6) Installing pcre (8.45-r1)
+(6/6) Installing grep (3.7-r0)
+Executing busybox-1.34.1-r3.trigger
+OK: 13 MiB in 28 packages
+[32;1m$ DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}[0;m
+[32;1m$ mkdir -p $DOCKER_CONFIG/cli-plugins[0;m
+[32;1m$ curl -SL https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose[0;m
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   664  100   664    0     0   2762      0 --:--:-- --:--:-- --:--:--  2766
+  0 23.5M    0 76294    0     0   122k      0  0:03:17 --:--:--  0:03:17  122k 47 23.5M   47 11.0M    0     0  7060k      0  0:00:03  0:00:01  0:00:02 11.0M 73 23.5M   73 17.3M    0     0  6829k      0  0:00:03  0:00:02  0:00:01 8868k 85 23.5M   85 20.2M    0     0  5719k      0  0:00:04  0:00:03  0:00:01 6850k 89 23.5M   89 21.1M    0     0  4696k      0  0:00:05  0:00:04  0:00:01 5394k 92 23.5M   92 21.7M    0     0  3972k      0  0:00:06  0:00:05  0:00:01 4440k 94 23.5M   94 22.3M    0     0  3456k      0  0:00:06  0:00:06 --:--:-- 2299k 96 23.5M   96 22.8M    0     0  3075k      0  0:00:07  0:00:07 --:--:-- 1116k100 23.5M  100 23.5M    0     0  2816k      0  0:00:08  0:00:08 --:--:--  688k
+[32;1m$ chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose[0;m
+[32;1m$ mkdir checker-logs/[0;m
+[32;1m$ rm .env.solution || true[0;m
+rm: can't remove '.env.solution': No such file or directory
+[32;1m$ echo "LANDLORD_ADDRESS=0xb33c27691A5441351152d9c35e91cf6b32f97e05" >> .env.solution[0;m
+[32;1m$ echo "RPC_URL=http://ganache:8545" >> .env.solution[0;m
+[32;1m$ copy_container_id=$(docker create $FRONTEND_CHECKER_IMAGE)[0;m
+[32;1m$ docker cp $copy_container_id:/docker-compose.yaml $FRONTEND_DOCKER_COMPOSE[0;m
+[32;1m$ docker rm -v $copy_container_id[0;m
+96805ccbee94f8e8bcb6cdbb9839045d60974033fa5b4ff4a914a6f9e1f767d9
+[32;1m$ docker container ps -a | grep solution-front | grep -Eo '^[^ ]+' | while read line ; do docker container stop $line ; docker container rm $line ; done || true[0;m
+[32;1m$ docker compose -p checker-front down || true[0;m
+checker-front  Warning: No resource found to remove
+[32;1m$ docker network prune -f[0;m
+[32;1m$ docker network create $CHECKER_NETWORK[0;m
+ded7576eba08a98a2012da160df1da252dfb94d251b3cb368347d82ee550f322
+[32;1m$ docker compose -f $FRONTEND_DOCKER_COMPOSE -p checker-front up --force-recreate -d selenium ganache[0;m
+Container ganache  Creating
+Container selenium  Creating
+Container ganache  Created
+Container selenium  Created
+Container ganache  Starting
+Container selenium  Starting
+Container ganache  Started
+Container selenium  Started
+[32;1m$ docker compose -f $SOLUTION_DOCKER_COMPOSE -p solution-front --env-file .env.solution up --force-recreate --build -d[0;m
+Sending build context to Docker daemon  16.08kB
+Step 1/7 : FROM python:3
+ ---> 33ceb4320f06
+Step 2/7 : ENV PYTHONDONTWRITEBYTECODE=1
+ ---> Using cache
+ ---> 0b52904b6808
+Step 3/7 : ENV PYTHONUNBUFFERED=1
+ ---> Using cache
+ ---> fdfb68f4f880
+Step 4/7 : RUN pip install -U pip
+ ---> Using cache
+ ---> dee67a2bc28f
+Step 5/7 : COPY requirements.txt /
+ ---> Using cache
+ ---> a30cc58b19aa
+Step 6/7 : RUN pip install -r requirements.txt
+ ---> Using cache
+ ---> ced18b4175e6
+Step 7/7 : COPY . /
+ ---> 5931620fafb5
+Successfully built 5931620fafb5
+Successfully tagged solution-front_web:latest
+Network solution-front_default  Creating
+Network solution-front_default  Created
+Container solution-web  Creating
+Container solution-web  Created
+Container solution-web  Starting
+Container solution-web  Started
+[32;1m$ docker compose -f $SOLUTION_DOCKER_COMPOSE -p solution-front ps -q | while read line ; do docker network connect $CHECKER_NETWORK $line; echo $line ; done[0;m
+76afe31bb629c2e95220b6bbed0e61304939365b04cae367089de610db23602c
+[32;1m$ docker compose -f $FRONTEND_DOCKER_COMPOSE -p checker-front up --force-recreate checker[0;m
+Container frontend-checker  Creating
+Container frontend-checker  Created
+Attaching to frontend-checker
+frontend-checker  | Compiler run successful. Artifact(s) can be found in directory "/solc_output".
+frontend-checker  | wait-for-it.sh: waiting 15 seconds for selenium:4444
+frontend-checker  | wait-for-it.sh: selenium:4444 is available after 2 seconds
+frontend-checker  | wait-for-it.sh: waiting 15 seconds for ganache:8545
+frontend-checker  | wait-for-it.sh: ganache:8545 is available after 2 seconds
+frontend-checker  | wait-for-it.sh: waiting 300 seconds for solution-web:80
+frontend-checker  | wait-for-it.sh: solution-web:80 is available after 0 seconds
+frontend-checker  | 
+frontend-checker  | > frontend@ test /
+frontend-checker  | > node runTests.js
+frontend-checker  | 
+frontend-checker  | Running tests...
+frontend-checker  | Done. Tests report:
+frontend-checker  | 
+frontend-checker  | US-201
+frontend-checker  |   ✗ AC-201-01 Аутентификация
+frontend-checker  |   ✓ AC-201-02 Проверка актуальности аутентификации — +4 points
+frontend-checker  | 
+frontend-checker  | US-202
+frontend-checker  |   ✓ AC-202-01 Добавление помещения — +16 points
+frontend-checker  |   ✗ AC-202-02 Проверка права на добавление помещений
+frontend-checker  | 
+frontend-checker  | US-203
+frontend-checker  |   ✗ AC-203-01 Просмотр общей информации о помещении
+frontend-checker  |   ✗ AC-203-02 Просмотр всех помещений арендодателем
+frontend-checker  |   ✗ AC-203-03 Просмотр помещений арендатором
+frontend-checker  |   ✗ AC-203-04 Просмотр помещений обычным пользователем
+frontend-checker  | 
+frontend-checker  | US-204
+frontend-checker  |   ✗ AC-204-01 Редактирование помещения
+frontend-checker  |   ✗ AC-204-02 Проверка права на редактирование помещений
+frontend-checker  | 
+frontend-checker  | US-205
+frontend-checker  |   ✗ AC-205-01 Установка публичного названия
+frontend-checker  |   ✗ AC-205-02 Редактирование публичного названия
+frontend-checker  |   ✗ AC-205-03 Удаление публичного названия
+frontend-checker  |   ✗ AC-205-04 Проверка права на изменение публичного названия
+frontend-checker  | 
+frontend-checker  | US-206
+frontend-checker  |   ✗ AC-206-01 Разрешение аренды помещения
+frontend-checker  | 
+frontend-checker  | US-207
+frontend-checker  |   ✗ AC-207-01 Проверка возможности удаления
+frontend-checker  |   ✗ AC-207-02 Удаление помещений
+frontend-checker  | 
+frontend-checker  | US-208
+frontend-checker  |   ✗ AC-208-01 Просмотр списка кассиров
+frontend-checker  |   ✗ AC-208-02 Добавление кассира
+frontend-checker  |   ✗ AC-208-03 Удаление кассира
+frontend-checker  |   ✗ AC-208-04 Навигация на страницу управления кассирами
+frontend-checker  |   ✗ AC-208-05 Проверка права на управление кассирами
+frontend-checker  | 
+frontend-checker  | US-209
+frontend-checker  |   ✗ AC-209-01 Отображение информации о квитанции
+frontend-checker  |   ✗ AC-209-02 Подключение к MetaMask
+frontend-checker  |   ✗ AC-209-03 Проверка сроков оплаты
+frontend-checker  |   ✗ AC-209-04 Проведение оплаты
+frontend-checker  | 
+frontend-checker  | Received 20 points in total
+frontend-checker  | Your HTML report is here: file:///__report/index.html
+frontend-checker  | To open it use: npx hermione gui or npx http-server __report
+frontend-checker  | npm ERR! code ELIFECYCLE
+frontend-checker  | npm ERR! errno 2
+frontend-checker  | npm ERR! frontend@ test: `node runTests.js`
+frontend-checker  | npm ERR! Exit status 2
+frontend-checker  | npm ERR! 
+frontend-checker  | npm ERR! Failed at the frontend@ test script.
+frontend-checker  | npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+frontend-checker  | 
+frontend-checker  | npm ERR! A complete log of this run can be found in:
+frontend-checker  | npm ERR!     /root/.npm/_logs/2022-03-18T13_55_17_367Z-debug.log
+frontend-checker exited with code 2
+[32;1m$ docker cp frontend-checker:/__report ./checker-logs/__report[0;m
+[32;1m$ docker compose -f $SOLUTION_DOCKER_COMPOSE -p solution-front logs > ./checker-logs/solution.log || true[0;m
+[32;1m$ export CHECKER_EXIT_CODE=$(docker inspect frontend-checker --format='{{.State.ExitCode}}')[0;m
+[32;1m$ exit $(($CHECKER_EXIT_CODE));[0;m
+section_end:1647611718:step_script[0Ksection_start:1647611718:after_script[0K[0K[36;1mRunning after_script[0;m[0;m
+[32;1mRunning after script...[0;m
+[32;1m$ docker compose version[0;m
+Docker Compose version v2.2.3
+[32;1m$ docker container ps -a | grep solution-front | grep -Eo '^[^ ]+' | while read line ; do docker container stop $line ; docker container rm $line ; done || true[0;m
+76afe31bb629
+76afe31bb629
+[32;1m$ docker compose -p checker-front down || true[0;m
+Container frontend-checker  Stopping
+Container frontend-checker  Stopping
+Container ganache  Stopping
+Container ganache  Stopping
+Container selenium  Stopping
+Container selenium  Stopping
+Container frontend-checker  Stopped
+Container frontend-checker  Removing
+Container frontend-checker  Removed
+Container ganache  Stopped
+Container ganache  Removing
+Container ganache  Removed
+Container selenium  Stopped
+Container selenium  Removing
+Container selenium  Removed
+[32;1m$ docker network prune -f[0;m
+Deleted Networks:
+frontend-checker-network-0b60aa0fc80f198b2c9a9542a85cd9ad407a483f
+solution-front_default
+
+[32;1m$ docker ps[0;m
+CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS     NAMES
+9858e23b69ba   6816f070b239   "docker-entrypoint.s…"   2 minutes ago    Up 4 seconds              runner-9-b5djuz-project-34434280-concurrent-0-eda988f9b863228b-build-2
+79585a08a5b5   5e80d4fb845e   "/usr/bin/dumb-init …"   3 minutes ago    Up 3 minutes              runner-9-b5djuz-project-34434267-concurrent-0-de7348e10eae0f68-docker-0-wait-for-service
+fa0e3270d709   5e80d4fb845e   "/usr/bin/dumb-init …"   4 minutes ago    Up 4 minutes              runner-9-b5djuz-project-34434267-concurrent-0-b6d4d5c55ffcb9d7-docker-0-wait-for-service
+8aed536cd82e   5e80d4fb845e   "/usr/bin/dumb-init …"   46 minutes ago   Up 46 minutes             runner-9-b5djuz-project-34434269-concurrent-0-fa80620caa827284-docker-0-wait-for-service
+de2d18f1a602   5e80d4fb845e   "/usr/bin/dumb-init …"   24 hours ago     Up 24 hours               runner-9-b5djuz-project-34434269-concurrent-0-c5ba7d1fc27e337d-docker-0-wait-for-service
+section_end:1647611723:after_script[0Ksection_start:1647611723:upload_artifacts_on_failure[0K[0K[36;1mUploading artifacts for failed job[0;m[0;m
+[32;1mUploading artifacts...[0;m
+checker-logs/: found 64 matching files and directories[0;m 
+Uploading artifacts as "archive" to coordinator... 201 Created[0;m  id[0;m=2221529591 responseStatus[0;m=201 Created token[0;m=yH9Ym3GU
+section_end:1647611726:upload_artifacts_on_failure[0Ksection_start:1647611726:cleanup_file_variables[0K[0K[36;1mCleaning up project directory and file based variables[0;m[0;m
+section_end:1647611727:cleanup_file_variables[0K[31;1mERROR: Job failed: exit code 2
+[0;m
