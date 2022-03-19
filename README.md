@@ -1,3 +1,11 @@
+# Mall
+
+This is my team's attempt to complete the final task of the NTO Programming Olympiad.
+
+And yes, that's fine, our main branch was `develop`.
+
+This repository serves one purpose - to document the event.
+
 Задача "Торговый Центр"
 ====
 
