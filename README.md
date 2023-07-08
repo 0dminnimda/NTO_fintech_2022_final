@@ -6,6 +6,20 @@ And yes, that's fine, our main branch was `develop`.
 
 This repository serves one purpose - to document the event.
 
+---
+
+To run the app, execute in terminal:
+
+```bash
+cd backend
+pip install -r requirements.txt
+python manage.py runserver 6969
+```
+
+For examples of the supported behaviour see [`check_backend.py`](check_backend.py)
+
+It's mostly POST requests and GraphQL schema, so not a lot visual to show.
+
 Задача "Торговый Центр"
 ====
 
